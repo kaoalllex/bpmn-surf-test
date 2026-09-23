@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Definitions_feeschedule" name="Fees" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.0.0">
+  <decision id="FeeSchedule" name="Fee schedule">
+    <decisionTable id="DecisionTable_FeeSchedule">
+      <input id="Input_product" label="Product">
+        <inputExpression id="InputExpression_Input_product" typeRef="string">
+          <text>product</text>
+        </inputExpression>
+      </input>
+      <input id="Input_channel" label="Channel">
+        <inputExpression id="InputExpression_Input_channel" typeRef="string">
+          <text>channel</text>
+        </inputExpression>
+      </input>
+      <output id="Output_fee" label="Fee" name="fee" typeRef="double" />
+      <rule id="Rule_FeeSchedule_1">
+        <inputEntry id="InputEntry_FeeSchedule_1_Input_product"><text>&quot;CARD&quot;</text></inputEntry>
+        <inputEntry id="InputEntry_FeeSchedule_1_Input_channel"><text>&quot;ONLINE&quot;</text></inputEntry>
+        <outputEntry id="OutputEntry_FeeSchedule_1_Output_fee"><text>1.5</text></outputEntry>
+      </rule>
+      <rule id="Rule_FeeSchedule_2">
+        <inputEntry id="InputEntry_FeeSchedule_2_Input_product"><text>&quot;CARD&quot;</text></inputEntry>
+        <inputEntry id="InputEntry_FeeSchedule_2_Input_channel"><text>&quot;POS&quot;</text></inputEntry>
+        <outputEntry id="OutputEntry_FeeSchedule_2_Output_fee"><text>2.0</text></outputEntry>
+      </rule>
+      <rule id="Rule_FeeSchedule_3">
+        <inputEntry id="InputEntry_FeeSchedule_3_Input_product"><text>&quot;TRANSFER&quot;</text></inputEntry>
+        <inputEntry id="InputEntry_FeeSchedule_3_Input_channel"><text>-</text></inputEntry>
+        <outputEntry id="OutputEntry_FeeSchedule_3_Output_fee"><text>0.5</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <decision id="FeeDiscount" name="Fee discount">
+    <decisionTable id="DecisionTable_FeeDiscount">
+      <input id="Input_loyalty" label="Loyalty years">
+        <inputExpression id="InputExpression_Input_loyalty" typeRef="integer">
+          <text>loyaltyYears</text>
+        </inputExpression>
+      </input>
+      <output id="Output_discount" label="Discount" name="discount" typeRef="double" />
+      <rule id="Rule_FeeDiscount_1">
+        <inputEntry id="InputEntry_FeeDiscount_1_Input_loyalty"><text>&lt; 1</text></inputEntry>
+        <outputEntry id="OutputEntry_FeeDiscount_1_Output_discount"><text>0</text></outputEntry>
+      </rule>
+      <rule id="Rule_FeeDiscount_2">
+        <inputEntry id="InputEntry_FeeDiscount_2_Input_loyalty"><text>[1..5]</text></inputEntry>
+        <outputEntry id="OutputEntry_FeeDiscount_2_Output_discount"><text>0.1</text></outputEntry>
+      </rule>
+      <rule id="Rule_FeeDiscount_3">
+        <inputEntry id="InputEntry_FeeDiscount_3_Input_loyalty"><text>&gt; 5</text></inputEntry>
+        <outputEntry id="OutputEntry_FeeDiscount_3_Output_discount"><text>0.25</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DMNDiagram_1">
+      <dmndi:DMNShape id="DMNShape_FeeSchedule" dmnElementRef="FeeSchedule"><dc:Bounds height="80" width="180" x="160" y="100" /></dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_FeeDiscount" dmnElementRef="FeeDiscount"><dc:Bounds height="80" width="180" x="160" y="220" /></dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

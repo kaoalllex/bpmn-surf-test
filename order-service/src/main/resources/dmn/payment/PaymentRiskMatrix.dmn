@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Definitions_paymentriskmatrix" name="Payment risk matrix" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.0.0">
+  <decision id="PaymentRiskMatrix" name="Payment risk matrix">
+    <decisionTable id="DecisionTable_PaymentRiskMatrix">
+      <input id="Input_amount" label="Amount">
+        <inputExpression id="InputExpression_Input_amount" typeRef="double">
+          <text>amount</text>
+        </inputExpression>
+      </input>
+      <input id="Input_segment" label="Customer segment">
+        <inputExpression id="InputExpression_Input_segment" typeRef="string">
+          <text>customerSegment</text>
+        </inputExpression>
+      </input>
+      <output id="Output_risk" label="Risk level" name="riskLevel" typeRef="string" />
+      <rule id="Rule_PaymentRiskMatrix_1">
+        <description>Small amount, new customer</description>
+        <inputEntry id="InputEntry_PaymentRiskMatrix_1_Input_amount"><text>&lt; 1000</text></inputEntry>
+        <inputEntry id="InputEntry_PaymentRiskMatrix_1_Input_segment"><text>&quot;NEW&quot;</text></inputEntry>
+        <outputEntry id="OutputEntry_PaymentRiskMatrix_1_Output_risk"><text>&quot;LOW&quot;</text></outputEntry>
+      </rule>
+      <rule id="Rule_PaymentRiskMatrix_2">
+        <inputEntry id="InputEntry_PaymentRiskMatrix_2_Input_amount"><text>&lt; 1000</text></inputEntry>
+        <inputEntry id="InputEntry_PaymentRiskMatrix_2_Input_segment"><text>&quot;RETURNING&quot;</text></inputEntry>
+        <outputEntry id="OutputEntry_PaymentRiskMatrix_2_Output_risk"><text>&quot;LOW&quot;</text></outputEntry>
+      </rule>
+      <rule id="Rule_PaymentRiskMatrix_3">
+        <inputEntry id="InputEntry_PaymentRiskMatrix_3_Input_amount"><text>[1000..10000]</text></inputEntry>
+        <inputEntry id="InputEntry_PaymentRiskMatrix_3_Input_segment"><text>&quot;NEW&quot;</text></inputEntry>
+        <outputEntry id="OutputEntry_PaymentRiskMatrix_3_Output_risk"><text>&quot;MEDIUM&quot;</text></outputEntry>
+      </rule>
+      <rule id="Rule_PaymentRiskMatrix_4">
+        <inputEntry id="InputEntry_PaymentRiskMatrix_4_Input_amount"><text>[1000..10000]</text></inputEntry>
+        <inputEntry id="InputEntry_PaymentRiskMatrix_4_Input_segment"><text>&quot;RETURNING&quot;</text></inputEntry>
+        <outputEntry id="OutputEntry_PaymentRiskMatrix_4_Output_risk"><text>&quot;LOW&quot;</text></outputEntry>
+      </rule>
+      <rule id="Rule_PaymentRiskMatrix_5">
+        <description>Large amount is always high risk</description>
+        <inputEntry id="InputEntry_PaymentRiskMatrix_5_Input_amount"><text>&gt; 10000</text></inputEntry>
+        <inputEntry id="InputEntry_PaymentRiskMatrix_5_Input_segment"><text>-</text></inputEntry>
+        <outputEntry id="OutputEntry_PaymentRiskMatrix_5_Output_risk"><text>&quot;HIGH&quot;</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DMNDiagram_1">
+      <dmndi:DMNShape id="DMNShape_PaymentRiskMatrix" dmnElementRef="PaymentRiskMatrix"><dc:Bounds height="80" width="180" x="160" y="100" /></dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

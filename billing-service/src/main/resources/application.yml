@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: billing-service
+
+camunda:
+  bpm:
+    deployment-resource-pattern: classpath*:bpmn/**/*.bpmn, classpath*:dmn/**/*.dmn
+
+billing:
+  messages:
+    dunning-resolved: DunningResolved
+  processes:
+    billing: BillingProcess
+    dunning: DunningProcess

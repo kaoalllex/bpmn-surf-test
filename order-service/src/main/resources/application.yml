@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: order-service
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS:localhost:9092}
+
+camunda:
+  bpm:
+    client:
+      base-url: ${CAMUNDA_URL:http://localhost:8080/engine-rest}
+      worker-id: order-service
+
+order:
+  messages:
+    paid: OrderPaid
+    shipped: OrderShipped
+  processes:
+    main: OrderMainProcess
+    fulfillment: FulfillmentProcess
