@@ -9,15 +9,25 @@
         <bpmn:incoming>Flow_f1</bpmn:incoming>
         <bpmn:outgoing>Flow_f2</bpmn:outgoing>
       </bpmn:serviceTask>
+      <bpmn:exclusiveGateway id="SplitShipment" name="Split the shipment?">
+        <bpmn:incoming>Flow_f2</bpmn:incoming>
+        <bpmn:outgoing>Flow_f2a</bpmn:outgoing>
+        <bpmn:outgoing>Flow_f2b</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:serviceTask id="PartialDelivery" name="Partial delivery" camunda:type="external" camunda:topic="partialDelivery">
+        <bpmn:incoming>Flow_f2b</bpmn:incoming>
+        <bpmn:outgoing>Flow_f2c</bpmn:outgoing>
+      </bpmn:serviceTask>
       <bpmn:callActivity id="Delivery" name="Delivery" calledElement="DeliveryProcess">
         <bpmn:extensionElements>
           <camunda:in source="orderId" target="orderId" />
         </bpmn:extensionElements>
-        <bpmn:incoming>Flow_f2</bpmn:incoming>
+        <bpmn:incoming>Flow_f2a</bpmn:incoming>
         <bpmn:outgoing>Flow_f3</bpmn:outgoing>
       </bpmn:callActivity>
       <bpmn:intermediateCatchEvent id="AwaitShipment" name="Shipment confirmed">
         <bpmn:messageEventDefinition id="MsgDef_Shipped" messageRef="Message_OrderShipped" />
+        <bpmn:incoming>Flow_f2c</bpmn:incoming>
         <bpmn:incoming>Flow_f3</bpmn:incoming>
         <bpmn:outgoing>Flow_f4</bpmn:outgoing>
       </bpmn:intermediateCatchEvent>
@@ -25,7 +35,14 @@
         <bpmn:incoming>Flow_f4</bpmn:incoming>
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="Flow_f1" sourceRef="StartFulfillment" targetRef="ReserveStock" />
-      <bpmn:sequenceFlow id="Flow_f2" sourceRef="ReserveStock" targetRef="Delivery" />
+      <bpmn:sequenceFlow id="Flow_f2" sourceRef="ReserveStock" targetRef="SplitShipment" />
+      <bpmn:sequenceFlow id="Flow_f2a" sourceRef="SplitShipment" targetRef="Delivery" name="whole">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!split}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_f2b" sourceRef="SplitShipment" targetRef="PartialDelivery" name="split">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${split}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_f2c" sourceRef="PartialDelivery" targetRef="AwaitShipment" />
       <bpmn:sequenceFlow id="Flow_f3" sourceRef="Delivery" targetRef="AwaitShipment" />
       <bpmn:sequenceFlow id="Flow_f4" sourceRef="AwaitShipment" targetRef="FulfillmentDone" />
   </bpmn:process>
@@ -33,13 +50,18 @@
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="FulfillmentProcess">
       <bpmndi:BPMNShape id="StartFulfillment_di" bpmnElement="StartFulfillment"><dc:Bounds x="142" y="102" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="124" y="143" width="114" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ReserveStock_di" bpmnElement="ReserveStock"><dc:Bounds x="285" y="80" width="110" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Delivery_di" bpmnElement="Delivery"><dc:Bounds x="465" y="80" width="110" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="AwaitShipment_di" bpmnElement="AwaitShipment"><dc:Bounds x="682" y="102" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="664" y="143" width="108" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="FulfillmentDone_di" bpmnElement="FulfillmentDone"><dc:Bounds x="862" y="102" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="844" y="143" width="60" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SplitShipment_di" bpmnElement="SplitShipment"><dc:Bounds x="495" y="95" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="477" y="150" width="114" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="PartialDelivery_di" bpmnElement="PartialDelivery"><dc:Bounds x="645" y="230" width="110" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Delivery_di" bpmnElement="Delivery"><dc:Bounds x="825" y="80" width="110" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AwaitShipment_di" bpmnElement="AwaitShipment"><dc:Bounds x="1042" y="102" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1024" y="143" width="108" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="FulfillmentDone_di" bpmnElement="FulfillmentDone"><dc:Bounds x="1222" y="102" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1204" y="143" width="60" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_f1_di" bpmnElement="Flow_f1"><di:waypoint x="178" y="120" /><di:waypoint x="285" y="120" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_f2_di" bpmnElement="Flow_f2"><di:waypoint x="395" y="120" /><di:waypoint x="465" y="120" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_f3_di" bpmnElement="Flow_f3"><di:waypoint x="575" y="120" /><di:waypoint x="682" y="120" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_f4_di" bpmnElement="Flow_f4"><di:waypoint x="718" y="120" /><di:waypoint x="862" y="120" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_f2_di" bpmnElement="Flow_f2"><di:waypoint x="395" y="120" /><di:waypoint x="495" y="120" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_f2a_di" bpmnElement="Flow_f2a"><di:waypoint x="545" y="120" /><di:waypoint x="825" y="120" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_f2b_di" bpmnElement="Flow_f2b"><di:waypoint x="545" y="120" /><di:waypoint x="700" y="120" /><di:waypoint x="700" y="230" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_f2c_di" bpmnElement="Flow_f2c"><di:waypoint x="755" y="270" /><di:waypoint x="1060" y="270" /><di:waypoint x="1060" y="138" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_f3_di" bpmnElement="Flow_f3"><di:waypoint x="935" y="120" /><di:waypoint x="1042" y="120" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_f4_di" bpmnElement="Flow_f4"><di:waypoint x="1078" y="120" /><di:waypoint x="1222" y="120" /></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
