@@ -12,7 +12,7 @@
         <bpmn:incoming>Flow_d2</bpmn:incoming>
         <bpmn:outgoing>Flow_d3</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:userTask id="PickCourier" name="Pick a courier" camunda:assignee="${logisticsUser}">
+      <bpmn:userTask id="PickCourier" name="Pick a courier (auto)" camunda:assignee="${logisticsUser}" camunda:candidateGroups="logistics">
         <bpmn:incoming>Flow_d3</bpmn:incoming>
         <bpmn:outgoing>Flow_d4</bpmn:outgoing>
       </bpmn:userTask>
