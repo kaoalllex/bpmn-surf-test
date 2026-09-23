@@ -4,7 +4,7 @@
       <bpmn:startEvent id="StartPayment" name="Payment started">
         <bpmn:outgoing>Flow_p1</bpmn:outgoing>
       </bpmn:startEvent>
-      <bpmn:businessRuleTask id="AssessRisk" name="Assess the payment risk" camunda:resultVariable="riskLevel" camunda:decisionRef="PaymentRiskMatrix" camunda:mapDecisionResult="singleEntry">
+      <bpmn:businessRuleTask id="AssessRisk" name="Assess the payment risk" camunda:resultVariable="riskLevel" camunda:decisionRef="PaymentRiskMatrixV2" camunda:mapDecisionResult="singleEntry">
         <bpmn:incoming>Flow_p1</bpmn:incoming>
         <bpmn:outgoing>Flow_p2</bpmn:outgoing>
       </bpmn:businessRuleTask>
@@ -13,7 +13,7 @@
         <bpmn:outgoing>Flow_p3</bpmn:outgoing>
         <bpmn:outgoing>Flow_p4</bpmn:outgoing>
       </bpmn:exclusiveGateway>
-      <bpmn:serviceTask id="ChargeCustomer" name="Charge the customer" camunda:type="external" camunda:topic="chargeCustomer">
+      <bpmn:serviceTask id="ChargeCustomer" name="Charge the customer" camunda:type="external" camunda:topic="chargeCustomerWithRetry">
         <bpmn:incoming>Flow_p3</bpmn:incoming>
         <bpmn:outgoing>Flow_p5</bpmn:outgoing>
       </bpmn:serviceTask>
