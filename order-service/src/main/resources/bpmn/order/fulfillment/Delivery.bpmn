@@ -5,6 +5,7 @@
         <bpmn:outgoing>Flow_d1</bpmn:outgoing>
       </bpmn:startEvent>
       <bpmn:serviceTask id="FindItems" name="Find the items" camunda:type="external" camunda:topic="findItems">
+        <bpmn:documentation>Looks the positions up in the order storage. Falls back to the catalog when the order carries item codes only.</bpmn:documentation>
         <bpmn:incoming>Flow_d1</bpmn:incoming>
         <bpmn:outgoing>Flow_d2</bpmn:outgoing>
       </bpmn:serviceTask>
@@ -18,7 +19,7 @@
       </bpmn:userTask>
       <bpmn:boundaryEvent id="CourierTimeout" name="No courier in 2 days" attachedToRef="PickCourier" cancelActivity="true">
         <bpmn:timerEventDefinition id="TimerDef_1">
-          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P2D</bpmn:timeDuration>
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P1D</bpmn:timeDuration>
         </bpmn:timerEventDefinition>
         <bpmn:outgoing>Flow_d5</bpmn:outgoing>
       </bpmn:boundaryEvent>
