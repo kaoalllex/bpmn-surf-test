@@ -20,6 +20,7 @@ public class ChargeCardDelegate implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) {
         String contractId = (String) execution.getVariable("contractId");
-        execution.setVariable("chargeId", cardGateway.charge(contractId));
+        boolean threeDs = Boolean.TRUE.equals(execution.getVariable("threeDsRequired"));
+        execution.setVariable("chargeId", cardGateway.charge(contractId, threeDs));
     }
 }
