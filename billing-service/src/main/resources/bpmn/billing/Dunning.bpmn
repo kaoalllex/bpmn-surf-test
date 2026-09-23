@@ -27,15 +27,15 @@
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DunningProcess">
-      <bpmndi:BPMNShape id="StartDunning_di" bpmnElement="StartDunning"><dc:Bounds x="142" y="102" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="124" y="143" width="90" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Refund_di" bpmnElement="Refund"><dc:Bounds x="285" y="80" width="110" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="AwaitResolution_di" bpmnElement="AwaitResolution"><dc:Bounds x="465" y="80" width="110" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="WriteOff_di" bpmnElement="WriteOff"><dc:Bounds x="645" y="80" width="110" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="DunningDone_di" bpmnElement="DunningDone"><dc:Bounds x="862" y="102" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="844" y="143" width="96" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_dn1_di" bpmnElement="Flow_dn1"><di:waypoint x="178" y="120" /><di:waypoint x="285" y="120" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_dn2_di" bpmnElement="Flow_dn2"><di:waypoint x="395" y="120" /><di:waypoint x="465" y="120" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_dn3_di" bpmnElement="Flow_dn3"><di:waypoint x="575" y="120" /><di:waypoint x="645" y="120" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_dn4_di" bpmnElement="Flow_dn4"><di:waypoint x="755" y="120" /><di:waypoint x="862" y="120" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartDunning_di" bpmnElement="StartDunning"><dc:Bounds x="142" y="142" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="124" y="183" width="90" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Refund_di" bpmnElement="Refund"><dc:Bounds x="285" y="120" width="110" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AwaitResolution_di" bpmnElement="AwaitResolution"><dc:Bounds x="465" y="120" width="110" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="WriteOff_di" bpmnElement="WriteOff"><dc:Bounds x="645" y="120" width="110" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DunningDone_di" bpmnElement="DunningDone"><dc:Bounds x="862" y="142" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="844" y="183" width="96" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_dn1_di" bpmnElement="Flow_dn1"><di:waypoint x="178" y="160" /><di:waypoint x="285" y="160" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_dn2_di" bpmnElement="Flow_dn2"><di:waypoint x="395" y="160" /><di:waypoint x="465" y="160" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_dn3_di" bpmnElement="Flow_dn3"><di:waypoint x="575" y="160" /><di:waypoint x="645" y="160" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_dn4_di" bpmnElement="Flow_dn4"><di:waypoint x="755" y="160" /><di:waypoint x="862" y="160" /></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
