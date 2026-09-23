@@ -8,7 +8,7 @@ camunda:
   bpm:
     client:
       base-url: ${CAMUNDA_URL:http://localhost:8080/engine-rest}
-      worker-id: order-service
+      worker-id: order-service-staging
 
 order:
   messages:
