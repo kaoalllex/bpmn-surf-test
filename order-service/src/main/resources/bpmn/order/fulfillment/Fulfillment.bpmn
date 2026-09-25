@@ -5,7 +5,7 @@
       <bpmn:startEvent id="StartFulfillment" name="Fulfillment started">
         <bpmn:outgoing>Flow_f1</bpmn:outgoing>
       </bpmn:startEvent>
-      <bpmn:serviceTask id="ReserveStock" name="Reserve the stock" camunda:type="external" camunda:topic="reserveStockHandler">
+      <bpmn:serviceTask id="ReserveStock" name="Reserve the stock" camunda:type="external" camunda:topic="reserveStock">
         <bpmn:incoming>Flow_f1</bpmn:incoming>
         <bpmn:outgoing>Flow_f2</bpmn:outgoing>
       </bpmn:serviceTask>

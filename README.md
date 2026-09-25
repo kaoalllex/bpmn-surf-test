@@ -8,7 +8,7 @@ only so the extension has something to resolve, diff and navigate.
 
 | Path | What it is for |
 |------|----------------|
-| `order-service/` | Camunda **external tasks**: every service task states `camunda:topic`, the handlers are Kotlin/Java classes annotated with `@ExternalTaskSubscription` or `@WrapToExternalTask` |
+| `order-service/` | Camunda **external tasks**: every service task states `camunda:topic`, the handlers are Kotlin/Java classes annotated with `@ExternalTaskSubscription` |
 | `billing-service/` | Classic **JavaDelegates**: service tasks reference `camunda:class` or `camunda:delegateExpression`, the delegates are Java classes |
 | `broken/` | Deliberately malformed diagrams (loading must fail cleanly, without leaking the document into the problem report) |
 | `legacy/` | One oversized diagram, for performance and rendering under load |
