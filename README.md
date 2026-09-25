@@ -37,3 +37,5 @@ BillingProcess
   class can be derived from it.
 - `migrationStep01…30` in `legacy/` have no handler code at all.
 - `PaymentRiskMatrixV2` is referenced only from a branch, not from `main`.
+- `root-level.bpmn` sits in the repository root on purpose: ref/path parsing used
+  to succeed only there, so it is the control case for every nested diagram.
