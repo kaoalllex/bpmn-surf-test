@@ -5,7 +5,7 @@
       <bpmn:startEvent id="StartRoot" name="Started">
         <bpmn:outgoing>Flow_root1</bpmn:outgoing>
       </bpmn:startEvent>
-      <bpmn:serviceTask id="RootValidate" name="Validate the order" camunda:type="external" camunda:topic="validateOrder">
+      <bpmn:serviceTask id="RootValidate" name="Validate the order (strict)" camunda:type="external" camunda:topic="validateOrder">
         <bpmn:incoming>Flow_root1</bpmn:incoming>
         <bpmn:outgoing>Flow_root2</bpmn:outgoing>
       </bpmn:serviceTask>
