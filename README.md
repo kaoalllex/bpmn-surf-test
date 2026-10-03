@@ -39,3 +39,9 @@ BillingProcess
 - `PaymentRiskMatrixV2` is referenced only from a branch, not from `main`.
 - `root-level.bpmn` sits in the repository root on purpose: ref/path parsing used
   to succeed only there, so it is the control case for every nested diagram.
+- `order-service/.../order/QesApplication.bpmn` hides its changes inside
+  subprocesses: the `test/subprocess-child-changes` MR touches only their children
+  (a renamed task in the expanded `UZ Issuance`, a renamed task in the collapsed
+  `Sign UZ` nested in it, a task added to the collapsed `Check documents`, one
+  removed from the collapsed `Archive application`). Every enclosing subprocess
+  must be marked as containing changes; `Notify client` is the untouched control.
