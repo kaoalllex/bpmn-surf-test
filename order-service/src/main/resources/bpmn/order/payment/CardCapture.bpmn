@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_CardCapture" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="CardCapture" name="Card capture" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Order paid">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="CaptureCardTask" name="Capture card" camunda:type="external" camunda:topic="captureCard">
+      <bpmn:extensionElements>
+        <camunda:errorEventDefinition id="CaptureCardErrorDefinition" errorRef="Error_PaymentFailed" expression="${captureFailed}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="NotifyMerchantsTask" name="Notify merchants" camunda:expression="${merchantNotifier.notify(merchant)}">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:asyncBefore="true" camunda:collection="${merchants}" camunda:elementVariable="merchant">
+        <bpmn:extensionElements>
+          <camunda:failedJobRetryTimeCycle>R3/PT1M</camunda:failedJobRetryTimeCycle>
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ArchivePaymentTask" name="Archive payment" camunda:asyncBefore="true" camunda:expression="${paymentArchive.store(execution)}">
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+      <bpmn:outgoing>Flow_4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="EndEvent_1" name="Payment captured">
+      <bpmn:incoming>Flow_4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="PaymentFailedBoundary" name="Payment failed" attachedToRef="CaptureCardTask">
+      <bpmn:outgoing>Flow_5</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="PaymentFailedDefinition" errorRef="Error_PaymentFailed" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="EndEvent_Failed" name="Payment rejected">
+      <bpmn:incoming>Flow_5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:subProcess id="CancellationSubProcess" name="Cancellation" triggeredByEvent="true">
+      <bpmn:startEvent id="OrderCancelledStart" name="Order cancelled" isInterrupting="false">
+        <bpmn:outgoing>Flow_6</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="OrderCancelledDefinition" messageRef="Message_OrderCancelled" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="CancellationEnd" name="Cancellation noted">
+        <bpmn:incoming>Flow_6</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_6" sourceRef="OrderCancelledStart" targetRef="CancellationEnd" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="CaptureCardTask" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="CaptureCardTask" targetRef="NotifyMerchantsTask" />
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="NotifyMerchantsTask" targetRef="ArchivePaymentTask" />
+    <bpmn:sequenceFlow id="Flow_4" sourceRef="ArchivePaymentTask" targetRef="EndEvent_1" />
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="PaymentFailedBoundary" targetRef="EndEvent_Failed" />
+  </bpmn:process>
+  <bpmn:error id="Error_PaymentFailed" name="Payment failed" errorCode="PAYMENT_FAILED" />
+  <bpmn:message id="Message_OrderCancelled" name="OrderCancelled" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CardCapture">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="144" y="145" width="53" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CaptureCardTask_di" bpmnElement="CaptureCardTask">
+        <dc:Bounds x="250" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NotifyMerchantsTask_di" bpmnElement="NotifyMerchantsTask">
+        <dc:Bounds x="420" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ArchivePaymentTask_di" bpmnElement="ArchivePaymentTask">
+        <dc:Bounds x="590" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1_di" bpmnElement="EndEvent_1">
+        <dc:Bounds x="762" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="737" y="145" width="87" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Failed_di" bpmnElement="EndEvent_Failed">
+        <dc:Bounds x="352" y="222" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="327" y="265" width="87" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="PaymentFailedBoundary_di" bpmnElement="PaymentFailedBoundary">
+        <dc:Bounds x="282" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="222" y="185" width="72" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CancellationSubProcess_di" bpmnElement="CancellationSubProcess" isExpanded="true">
+        <dc:Bounds x="420" y="300" width="300" height="140" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="OrderCancelledStart_di" bpmnElement="OrderCancelledStart">
+        <dc:Bounds x="462" y="352" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="440" y="395" width="80" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CancellationEnd_di" bpmnElement="CancellationEnd">
+        <dc:Bounds x="632" y="352" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="604" y="395" width="92" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="250" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="350" y="120" />
+        <di:waypoint x="420" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <di:waypoint x="520" y="120" />
+        <di:waypoint x="590" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_4_di" bpmnElement="Flow_4">
+        <di:waypoint x="690" y="120" />
+        <di:waypoint x="762" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_5_di" bpmnElement="Flow_5">
+        <di:waypoint x="300" y="178" />
+        <di:waypoint x="300" y="240" />
+        <di:waypoint x="352" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_6_di" bpmnElement="Flow_6">
+        <di:waypoint x="498" y="370" />
+        <di:waypoint x="632" y="370" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
