@@ -25,9 +25,10 @@
         <outputEntry id="OutputEntry_PaymentRiskMatrix_2_Output_risk"><text>&quot;LOW&quot;</text></outputEntry>
       </rule>
       <rule id="Rule_PaymentRiskMatrix_3">
+        <description>Tightened after the Q3 incident</description>
         <inputEntry id="InputEntry_PaymentRiskMatrix_3_Input_amount"><text>[1000..10000]</text></inputEntry>
         <inputEntry id="InputEntry_PaymentRiskMatrix_3_Input_segment"><text>&quot;NEW&quot;</text></inputEntry>
-        <outputEntry id="OutputEntry_PaymentRiskMatrix_3_Output_risk"><text>&quot;MEDIUM&quot;</text></outputEntry>
+        <outputEntry id="OutputEntry_PaymentRiskMatrix_3_Output_risk"><text>&quot;HIGH&quot;</text></outputEntry>
       </rule>
       <rule id="Rule_PaymentRiskMatrix_4">
         <inputEntry id="InputEntry_PaymentRiskMatrix_4_Input_amount"><text>[1000..10000]</text></inputEntry>
@@ -35,10 +36,16 @@
         <outputEntry id="OutputEntry_PaymentRiskMatrix_4_Output_risk"><text>&quot;LOW&quot;</text></outputEntry>
       </rule>
       <rule id="Rule_PaymentRiskMatrix_5">
+        <description>VIP bypass</description>
+        <inputEntry id="InputEntry_PaymentRiskMatrix_5_Input_amount"><text>[1000..10000]</text></inputEntry>
+        <inputEntry id="InputEntry_PaymentRiskMatrix_5_Input_segment"><text>&quot;VIP&quot;</text></inputEntry>
+        <outputEntry id="OutputEntry_PaymentRiskMatrix_5_Output_risk"><text>&quot;LOW&quot;</text></outputEntry>
+      </rule>
+      <rule id="Rule_PaymentRiskMatrix_6">
         <description>Large amount is always high risk</description>
-        <inputEntry id="InputEntry_PaymentRiskMatrix_5_Input_amount"><text>&gt; 10000</text></inputEntry>
-        <inputEntry id="InputEntry_PaymentRiskMatrix_5_Input_segment"><text>-</text></inputEntry>
-        <outputEntry id="OutputEntry_PaymentRiskMatrix_5_Output_risk"><text>&quot;HIGH&quot;</text></outputEntry>
+        <inputEntry id="InputEntry_PaymentRiskMatrix_6_Input_amount"><text>&gt; 10000</text></inputEntry>
+        <inputEntry id="InputEntry_PaymentRiskMatrix_6_Input_segment"><text>-</text></inputEntry>
+        <outputEntry id="OutputEntry_PaymentRiskMatrix_6_Output_risk"><text>&quot;HIGH&quot;</text></outputEntry>
       </rule>
     </decisionTable>
   </decision>
