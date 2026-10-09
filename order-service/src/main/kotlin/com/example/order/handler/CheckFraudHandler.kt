@@ -17,3 +17,5 @@ class CheckFraudHandler(
         service.complete(task, mapOf("fraudScore" to score, "suspicious" to (score > 80)))
     }
 }
+
+// code-only MR: no diagram here
