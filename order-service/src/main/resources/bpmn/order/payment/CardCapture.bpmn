@@ -14,13 +14,13 @@
     <bpmn:serviceTask id="NotifyMerchantsTask" name="Notify merchants" camunda:expression="${merchantNotifier.notify(merchant)}">
       <bpmn:incoming>Flow_2</bpmn:incoming>
       <bpmn:outgoing>Flow_3</bpmn:outgoing>
-      <bpmn:multiInstanceLoopCharacteristics camunda:asyncBefore="true" camunda:collection="${merchants}" camunda:elementVariable="merchant">
+      <bpmn:multiInstanceLoopCharacteristics camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:collection="${merchants}" camunda:elementVariable="merchant">
         <bpmn:extensionElements>
-          <camunda:failedJobRetryTimeCycle>R3/PT1M</camunda:failedJobRetryTimeCycle>
+          <camunda:failedJobRetryTimeCycle>R5/PT1M</camunda:failedJobRetryTimeCycle>
         </bpmn:extensionElements>
       </bpmn:multiInstanceLoopCharacteristics>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="ArchivePaymentTask" name="Archive payment" camunda:asyncBefore="true" camunda:expression="${paymentArchive.store(execution)}">
+    <bpmn:serviceTask id="ArchivePaymentTask" name="Archive payment" camunda:asyncBefore="true" camunda:asyncAfter="false" camunda:exclusive="true" camunda:expression="${paymentArchive.store(execution)}">
       <bpmn:incoming>Flow_3</bpmn:incoming>
       <bpmn:outgoing>Flow_4</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -29,13 +29,13 @@
     </bpmn:endEvent>
     <bpmn:boundaryEvent id="PaymentFailedBoundary" name="Payment failed" attachedToRef="CaptureCardTask">
       <bpmn:outgoing>Flow_5</bpmn:outgoing>
-      <bpmn:errorEventDefinition id="PaymentFailedDefinition" errorRef="Error_PaymentFailed" />
+      <bpmn:errorEventDefinition id="PaymentFailedDefinition" errorRef="Error_PaymentFailed" camunda:errorCodeVariable="paymentErrorCode" />
     </bpmn:boundaryEvent>
     <bpmn:endEvent id="EndEvent_Failed" name="Payment rejected">
       <bpmn:incoming>Flow_5</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:subProcess id="CancellationSubProcess" name="Cancellation" triggeredByEvent="true">
-      <bpmn:startEvent id="OrderCancelledStart" name="Order cancelled" isInterrupting="false">
+      <bpmn:startEvent id="OrderCancelledStart" name="Order cancelled">
         <bpmn:outgoing>Flow_6</bpmn:outgoing>
         <bpmn:messageEventDefinition id="OrderCancelledDefinition" messageRef="Message_OrderCancelled" />
       </bpmn:startEvent>
@@ -50,7 +50,7 @@
     <bpmn:sequenceFlow id="Flow_4" sourceRef="ArchivePaymentTask" targetRef="EndEvent_1" />
     <bpmn:sequenceFlow id="Flow_5" sourceRef="PaymentFailedBoundary" targetRef="EndEvent_Failed" />
   </bpmn:process>
-  <bpmn:error id="Error_PaymentFailed" name="Payment failed" errorCode="PAYMENT_FAILED" />
+  <bpmn:error id="Error_PaymentFailed" name="Payment failed" errorCode="PAYMENT_DECLINED" />
   <bpmn:message id="Message_OrderCancelled" name="OrderCancelled" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CardCapture">
