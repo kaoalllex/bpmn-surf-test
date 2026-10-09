@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_returnsprocess" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0">
+  <bpmn:process id="ReturnsProcess" name="Returns" isExecutable="true">
+      <bpmn:startEvent id="StartReturn" name="Return requested">
+        <bpmn:outgoing>Flow_r1</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:serviceTask id="CheckEligibility" name="Check the eligibility" camunda:type="external" camunda:topic="checkReturnEligibility">
+        <bpmn:incoming>Flow_r1</bpmn:incoming>
+        <bpmn:outgoing>Flow_r2</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:exclusiveGateway id="EligibleGateway" name="Eligible?">
+        <bpmn:incoming>Flow_r2</bpmn:incoming>
+        <bpmn:outgoing>Flow_r3</bpmn:outgoing>
+        <bpmn:outgoing>Flow_r4</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:callActivity id="PickUpGoods" name="Pick the goods up" calledElement="DeliveryProcess">
+        <bpmn:incoming>Flow_r3</bpmn:incoming>
+        <bpmn:outgoing>Flow_r5</bpmn:outgoing>
+      </bpmn:callActivity>
+      <bpmn:callActivity id="RefundPayment" name="Refund" calledElement="DunningProcess">
+        <bpmn:incoming>Flow_r5</bpmn:incoming>
+        <bpmn:outgoing>Flow_r6</bpmn:outgoing>
+      </bpmn:callActivity>
+      <bpmn:endEvent id="ReturnDone" name="Return finished">
+        <bpmn:incoming>Flow_r6</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:endEvent id="ReturnRejected" name="Return rejected">
+        <bpmn:incoming>Flow_r4</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_r1" sourceRef="StartReturn" targetRef="CheckEligibility" />
+      <bpmn:sequenceFlow id="Flow_r2" sourceRef="CheckEligibility" targetRef="EligibleGateway" />
+      <bpmn:sequenceFlow id="Flow_r3" sourceRef="EligibleGateway" targetRef="PickUpGoods" name="yes">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${eligible}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_r4" sourceRef="EligibleGateway" targetRef="ReturnRejected" name="no">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!eligible}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_r5" sourceRef="PickUpGoods" targetRef="RefundPayment" />
+      <bpmn:sequenceFlow id="Flow_r6" sourceRef="RefundPayment" targetRef="ReturnDone" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ReturnsProcess">
+      <bpmndi:BPMNShape id="StartReturn_di" bpmnElement="StartReturn"><dc:Bounds x="142" y="102" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="124" y="143" width="96" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CheckEligibility_di" bpmnElement="CheckEligibility"><dc:Bounds x="285" y="80" width="110" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EligibleGateway_di" bpmnElement="EligibleGateway"><dc:Bounds x="495" y="95" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="477" y="150" width="60" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="PickUpGoods_di" bpmnElement="PickUpGoods"><dc:Bounds x="645" y="80" width="110" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RefundPayment_di" bpmnElement="RefundPayment"><dc:Bounds x="825" y="80" width="110" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReturnDone_di" bpmnElement="ReturnDone"><dc:Bounds x="1042" y="102" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1024" y="143" width="90" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReturnRejected_di" bpmnElement="ReturnRejected"><dc:Bounds x="682" y="252" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="664" y="293" width="90" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_r1_di" bpmnElement="Flow_r1"><di:waypoint x="178" y="120" /><di:waypoint x="285" y="120" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_r2_di" bpmnElement="Flow_r2"><di:waypoint x="395" y="120" /><di:waypoint x="495" y="120" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_r3_di" bpmnElement="Flow_r3"><di:waypoint x="545" y="120" /><di:waypoint x="645" y="120" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_r4_di" bpmnElement="Flow_r4"><di:waypoint x="545" y="120" /><di:waypoint x="700" y="120" /><di:waypoint x="700" y="252" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_r5_di" bpmnElement="Flow_r5"><di:waypoint x="755" y="120" /><di:waypoint x="825" y="120" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_r6_di" bpmnElement="Flow_r6"><di:waypoint x="935" y="120" /><di:waypoint x="1042" y="120" /></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
