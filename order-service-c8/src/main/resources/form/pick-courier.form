@@ -1,0 +1,40 @@
+{
+  "components": [
+    {
+      "label": "Courier",
+      "type": "select",
+      "key": "courier",
+      "id": "Field_courier",
+      "values": [
+        {
+          "label": "DHL",
+          "value": "dhl"
+        },
+        {
+          "label": "UPS",
+          "value": "ups"
+        }
+      ],
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Pickup date",
+      "type": "datetime",
+      "key": "pickupDate",
+      "id": "Field_pickupDate",
+      "subtype": "date",
+      "dateLabel": "Pickup date"
+    }
+  ],
+  "type": "default",
+  "id": "pick-courier",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.7.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.49.0"
+  },
+  "schemaVersion": 18
+}

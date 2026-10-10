@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_feeschedulec8" name="Fees" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.49.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.7.0">
+  <decision id="FeeScheduleC8" name="Fee schedule">
+    <decisionTable id="DecisionTable_FeeScheduleC8" hitPolicy="FIRST">
+      <input id="Input_product" label="Product">
+        <inputExpression id="InputExpression_product" typeRef="string">
+          <text>product</text>
+        </inputExpression>
+      </input>
+      <input id="Input_channel" label="Channel">
+        <inputExpression id="InputExpression_channel" typeRef="string">
+          <text>channel</text>
+        </inputExpression>
+      </input>
+      <output id="Output_fee" label="Fee" name="fee" typeRef="number" />
+      <rule id="Rule_FeeScheduleC8_1">
+        <inputEntry id="InputEntry_FeeScheduleC8_1_product"><text>&quot;CARD&quot;</text></inputEntry>
+        <inputEntry id="InputEntry_FeeScheduleC8_1_channel"><text>&quot;ONLINE&quot;</text></inputEntry>
+        <outputEntry id="OutputEntry_FeeScheduleC8_1"><text>1.5</text></outputEntry>
+      </rule>
+      <rule id="Rule_FeeScheduleC8_2">
+        <inputEntry id="InputEntry_FeeScheduleC8_2_product"><text>&quot;CARD&quot;</text></inputEntry>
+        <inputEntry id="InputEntry_FeeScheduleC8_2_channel"><text>&quot;POS&quot;</text></inputEntry>
+        <outputEntry id="OutputEntry_FeeScheduleC8_2"><text>2.0</text></outputEntry>
+      </rule>
+      <rule id="Rule_FeeScheduleC8_3">
+        <inputEntry id="InputEntry_FeeScheduleC8_3_product"><text>&quot;TRANSFER&quot;</text></inputEntry>
+        <inputEntry id="InputEntry_FeeScheduleC8_3_channel"><text>-</text></inputEntry>
+        <outputEntry id="OutputEntry_FeeScheduleC8_3"><text>0.5</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DMNDiagram_1">
+      <dmndi:DMNShape id="DMNShape_FeeScheduleC8" dmnElementRef="FeeScheduleC8"><dc:Bounds height="80" width="180" x="160" y="100" /></dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

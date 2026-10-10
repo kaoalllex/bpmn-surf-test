@@ -9,6 +9,7 @@ only so the extension has something to resolve, diff and navigate.
 | Path | What it is for |
 |------|----------------|
 | `order-service/` | Camunda **external tasks**: every service task states `camunda:topic`, the handlers are Kotlin/Java classes annotated with `@ExternalTaskSubscription` |
+| `order-service-c8/` | The **Camunda 8 (Zeebe)** twin of `order-service`: `zeebe:taskDefinition` job types, `zeebe:calledElement` / `zeebe:calledDecision`, I/O mappings, headers, user tasks with forms, FEEL. Workers are Kotlin/Java methods annotated with `@JobWorker`. Every id a search keys on (process, decision, message) carries a `C8` suffix, so the two modules never answer each other's searches |
 | `billing-service/` | Classic **JavaDelegates**: service tasks reference `camunda:class` or `camunda:delegateExpression`, the delegates are Java classes |
 | `broken/` | Deliberately malformed diagrams (loading must fail cleanly, without leaking the document into the problem report) |
 | `legacy/` | One oversized diagram, for performance and rendering under load |
@@ -25,6 +26,14 @@ OrderMainProcess
     └── DunningProcess          <- lives in the other module
 BillingProcess
 └── DunningProcess
+
+OrderMainC8                     <- order-service-c8
+├── FulfillmentC8
+│   └── DeliveryC8
+└── PaymentC8
+    ├── PaymentRiskC8 (DMN)
+    ├── FeeScheduleC8 (DMN)
+    └── DunningC8               <- not defined anywhere
 ```
 
 ## Deliberate traps
@@ -47,3 +56,22 @@ BillingProcess
   must be marked as containing changes; `Notify client` is the untouched control.
 
 GitHub mirror: main moved ahead of the open pull requests on purpose.
+
+## Camunda 8 traps (`order-service-c8/`)
+
+- `find-items` / `find-items-in-catalog` and `charge-customer` /
+  `charge-customer-with-retry`: the job-type prefix traps, in Kotlin and in Java.
+- `@JobWorker` with no `type` (`screenFraud`, `packItem`): the job type is the
+  method name.
+- `@JobWorker(timeout = 30_000, type = "reserve-stock")`: `type` is not the first
+  argument; `find-items-in-catalog` spans several lines.
+- `escalate-delivery` is served by the deprecated `@ZeebeWorker`: found only when
+  that annotation name is configured in the extension.
+- `archive-delivery` has no worker at all; `Notify the payment provider` is an HTTP
+  connector (`io.camunda:http-json:1`) and must not get a handler badge.
+- "Order completed published" is a message throw event whose job type sits on the
+  event itself, not on its message event definition.
+- `audit-step` is an execution listener's job type, not a task's.
+- `DunningC8` is called but defined nowhere.
+- `PaymentEventsListener` publishes `OrderPaidC8` (`newPublishMessageCommand`),
+  `ShipmentConsumer` correlates `ShipmentConfirmedC8` (`newCorrelateMessageCommand`).
