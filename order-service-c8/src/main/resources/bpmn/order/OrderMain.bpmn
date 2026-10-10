@@ -2,7 +2,7 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_ordermainc8" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.49.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.7.0">
   <bpmn:message id="Message_OrderPaidC8" name="OrderPaidC8">
     <bpmn:extensionElements>
-      <zeebe:subscription correlationKey="=orderId" />
+      <zeebe:subscription correlationKey="=order.id" />
     </bpmn:extensionElements>
   </bpmn:message>
   <bpmn:message id="Message_OrderCompletedC8" name="OrderCompletedC8" />
@@ -15,27 +15,28 @@
   </bpmn:collaboration>
   <bpmn:process id="OrderMainC8" name="Order origination" isExecutable="true">
     <bpmn:extensionElements>
-      <zeebe:versionTag value="1.0" />
+      <zeebe:versionTag value="1.1" />
     </bpmn:extensionElements>
     <bpmn:startEvent id="StartOrder" name="Order received">
       <bpmn:outgoing>Flow_1</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:serviceTask id="ValidateOrder" name="Validate the order">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="validate-order" retries="3" />
+        <zeebe:taskDefinition type="validate-order" retries="5" />
         <zeebe:ioMapping>
           <zeebe:input source="=orderId" target="orderId" />
+          <zeebe:input source="=customerId" target="customerId" />
         </zeebe:ioMapping>
         <zeebe:executionListeners>
-          <zeebe:executionListener eventType="start" retries="3" type="audit-step" />
+          <zeebe:executionListener eventType="start" retries="3" type="audit-order-step" />
         </zeebe:executionListeners>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1</bpmn:incoming>
       <bpmn:outgoing>Flow_2</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="ScreenFraud" name="Screen for fraud">
+    <bpmn:serviceTask id="CheckAddress" name="Check the address">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="screenFraud" retries="3" />
+        <zeebe:taskDefinition type="check-address" retries="3" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_2</bpmn:incoming>
       <bpmn:outgoing>Flow_3</bpmn:outgoing>
@@ -53,10 +54,11 @@
     </bpmn:callActivity>
     <bpmn:callActivity id="Payment" name="Payment">
       <bpmn:extensionElements>
-        <zeebe:calledElement processId="PaymentC8" propagateAllChildVariables="false" />
+        <zeebe:calledElement processId="PaymentC8" propagateAllChildVariables="true" />
         <zeebe:ioMapping>
           <zeebe:input source="=orderId" target="orderId" />
           <zeebe:input source="=amount" target="amount" />
+          <zeebe:output source="=paymentId" target="paymentId" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_4</bpmn:incoming>
@@ -76,6 +78,7 @@
         <zeebe:taskDefinition type="notify-customer" retries="3" />
         <zeebe:taskHeaders>
           <zeebe:header key="template" value="order-completed" />
+          <zeebe:header key="channel" value="email" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_yes</bpmn:incoming>
@@ -103,14 +106,15 @@
       <bpmn:incoming>Flow_9</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1" sourceRef="StartOrder" targetRef="ValidateOrder" />
-    <bpmn:sequenceFlow id="Flow_2" sourceRef="ValidateOrder" targetRef="ScreenFraud" />
-    <bpmn:sequenceFlow id="Flow_3" sourceRef="ScreenFraud" targetRef="Fulfillment" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="ValidateOrder" targetRef="CheckAddress" />
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="CheckAddress" targetRef="Fulfillment" />
     <bpmn:sequenceFlow id="Flow_4" sourceRef="Fulfillment" targetRef="Payment" />
     <bpmn:sequenceFlow id="Flow_5" sourceRef="Payment" targetRef="AwaitPayment" />
     <bpmn:sequenceFlow id="Flow_6" sourceRef="AwaitPayment" targetRef="PaidGateway" />
     <bpmn:sequenceFlow id="Flow_yes" name="yes" sourceRef="PaidGateway" targetRef="NotifyCustomer">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=paid and amount &gt; 0
-  and (segment = "REGULAR" or loyaltyYears &gt;= 2)</bpmn:conditionExpression>
+  and not(fraudSuspected)
+  and (segment = "REGULAR" or loyaltyYears &gt;= 1)</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_no" name="no" sourceRef="PaidGateway" targetRef="CancelOrder" />
     <bpmn:sequenceFlow id="Flow_7" sourceRef="NotifyCustomer" targetRef="PublishCompleted" />
@@ -137,7 +141,7 @@
       <bpmndi:BPMNShape id="ValidateOrder_di" bpmnElement="ValidateOrder">
         <dc:Bounds x="260" y="180" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ScreenFraud_di" bpmnElement="ScreenFraud">
+      <bpmndi:BPMNShape id="CheckAddress_di" bpmnElement="CheckAddress">
         <dc:Bounds x="400" y="180" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Fulfillment_di" bpmnElement="Fulfillment">
