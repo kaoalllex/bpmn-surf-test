@@ -3,7 +3,7 @@
   <bpmn:message id="Message_OrderShipped" name="OrderShipped" />
   <bpmn:process id="FulfillmentProcess" name="Fulfillment" isExecutable="true">
     <bpmn:extensionElements>
-      <camunda:executionListener class="com.example.order.listener.FulfillmentAudit" event="start" />
+      <camunda:executionListener class="com.example.order.listener.FulfillmentAudit" event="end" />
     </bpmn:extensionElements>
     <bpmn:startEvent id="StartFulfillment" name="Fulfillment started">
       <bpmn:outgoing>Flow_f1</bpmn:outgoing>
