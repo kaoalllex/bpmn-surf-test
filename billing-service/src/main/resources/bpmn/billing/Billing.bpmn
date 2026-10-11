@@ -19,6 +19,11 @@
       <bpmn:outgoing>Flow_b5</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:serviceTask id="IssueInvoice" name="Issue the invoice" camunda:asyncBefore="true" camunda:class="com.example.billing.delegate.IssueInvoiceDelegate">
+      <bpmn:extensionElements>
+        <camunda:field name="currency">
+          <camunda:string>EUR</camunda:string>
+        </camunda:field>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_b2</bpmn:incoming>
       <bpmn:outgoing>Flow_b3</bpmn:outgoing>
     </bpmn:serviceTask>

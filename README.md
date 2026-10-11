@@ -46,6 +46,15 @@ OrderMainC8                     <- order-service-c8
   class can be derived from it.
 - `migrationStep01…30` in `legacy/` have no handler code at all.
 - `PaymentRiskMatrixV2` is referenced only from a branch, not from `main`.
+- Camunda 7 listeners (`order-service/.../listener/`): `AuditListener` is a
+  `camunda:class` execution listener of "Validate the order" (start and end — one
+  badge) and of the Order origination process (shown on its pool); `${stepTimer}`
+  is a `camunda:delegateExpression` listener on the flow into Fulfillment;
+  "Check for fraud" has only an expression listener (no badge); the pool-less
+  Fulfillment process has `FulfillmentAudit` (shown on its start event); "Pick a
+  courier" has the task listener `AssignCourierListener`. The
+  `c7/model-changes` MR changes `AuditListener` and one property of every
+  Camunda 7 panel group.
 - `root-level.bpmn` sits in the repository root on purpose: ref/path parsing used
   to succeed only there, so it is the control case for every nested diagram.
 - `order-service/.../order/QesApplication.bpmn` hides its changes inside

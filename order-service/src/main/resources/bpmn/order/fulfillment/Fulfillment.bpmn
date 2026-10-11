@@ -2,6 +2,9 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_fulfillmentprocess" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.49.0">
   <bpmn:message id="Message_OrderShipped" name="OrderShipped" />
   <bpmn:process id="FulfillmentProcess" name="Fulfillment" isExecutable="true">
+    <bpmn:extensionElements>
+      <camunda:executionListener class="com.example.order.listener.FulfillmentAudit" event="start" />
+    </bpmn:extensionElements>
     <bpmn:startEvent id="StartFulfillment" name="Fulfillment started">
       <bpmn:outgoing>Flow_f1</bpmn:outgoing>
     </bpmn:startEvent>

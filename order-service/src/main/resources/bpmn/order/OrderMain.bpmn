@@ -9,11 +9,21 @@
     <bpmn:messageFlow id="MFlow_2" sourceRef="Participant_Kafka" targetRef="AwaitPayment" />
   </bpmn:collaboration>
   <bpmn:process id="OrderMainProcess" name="Order origination" isExecutable="true">
+    <bpmn:extensionElements>
+      <camunda:executionListener class="com.example.order.listener.AuditListener" event="end" />
+    </bpmn:extensionElements>
     <bpmn:serviceTask id="ValidateOrder" name="Validate the order" camunda:asyncBefore="true" camunda:type="external" camunda:topic="validateOrder">
+      <bpmn:extensionElements>
+        <camunda:executionListener class="com.example.order.listener.AuditListener" event="start" />
+        <camunda:executionListener class="com.example.order.listener.AuditListener" event="end" />
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_om1</bpmn:incoming>
       <bpmn:outgoing>Flow_om2</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="CheckFraud" name="Check for fraud" camunda:asyncBefore="true" camunda:type="external" camunda:topic="checkFraud">
+      <bpmn:extensionElements>
+        <camunda:executionListener expression="${auditLog.record(execution)}" event="start" />
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_om2</bpmn:incoming>
       <bpmn:outgoing>Flow_om3</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -60,7 +70,11 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_om1" sourceRef="StartOrder" targetRef="ValidateOrder" />
     <bpmn:sequenceFlow id="Flow_om2" sourceRef="ValidateOrder" targetRef="CheckFraud" />
-    <bpmn:sequenceFlow id="Flow_om3" sourceRef="CheckFraud" targetRef="Fulfillment" />
+    <bpmn:sequenceFlow id="Flow_om3" sourceRef="CheckFraud" targetRef="Fulfillment">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="${stepTimer}" event="take" />
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_om4" sourceRef="Fulfillment" targetRef="Payment" />
     <bpmn:sequenceFlow id="Flow_om5" sourceRef="Payment" targetRef="AwaitPayment" />
     <bpmn:sequenceFlow id="Flow_om6" sourceRef="AwaitPayment" targetRef="PaidGateway" />
