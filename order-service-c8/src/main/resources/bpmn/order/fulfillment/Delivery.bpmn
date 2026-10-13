@@ -27,10 +27,10 @@
     <bpmn:userTask id="PickCourier" name="Pick a courier">
       <bpmn:extensionElements>
         <zeebe:userTask />
-        <zeebe:formDefinition formId="pick-courier" />
-        <zeebe:assignmentDefinition assignee="=logisticsUser" candidateGroups="logistics" />
+        <zeebe:formDefinition formId="pick-courier-v2" />
+        <zeebe:assignmentDefinition assignee="=logisticsUser" candidateGroups="logistics, dispatch" />
         <zeebe:taskSchedule dueDate="=now() + duration(&quot;P1D&quot;)" />
-        <zeebe:priorityDefinition priority="50" />
+        <zeebe:priorityDefinition priority="70" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_d3</bpmn:incoming>
       <bpmn:outgoing>Flow_d4</bpmn:outgoing>
@@ -45,13 +45,14 @@
     <bpmn:endEvent id="DeliveryDone" name="Delivered">
       <bpmn:incoming>Flow_d5</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="EscalateDelivery" name="Escalate the delivery">
+    <bpmn:userTask id="EscalateDelivery" name="Escalate the delivery">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="escalate-delivery" retries="3" />
+        <zeebe:userTask />
+        <zeebe:assignmentDefinition candidateGroups="dispatch" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_d6</bpmn:incoming>
       <bpmn:outgoing>Flow_d7</bpmn:outgoing>
-    </bpmn:serviceTask>
+    </bpmn:userTask>
     <bpmn:endEvent id="DeliveryFailed" name="Delivery failed">
       <bpmn:incoming>Flow_d7</bpmn:incoming>
     </bpmn:endEvent>

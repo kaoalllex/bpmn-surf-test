@@ -11,6 +11,9 @@
     <bpmn:businessRuleTask id="AssessRisk" name="Assess the payment risk">
       <bpmn:extensionElements>
         <zeebe:calledDecision decisionId="PaymentRiskC8" resultVariable="riskLevel" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=amount" target="amount" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_p1</bpmn:incoming>
       <bpmn:outgoing>Flow_p2</bpmn:outgoing>
@@ -22,7 +25,7 @@
     </bpmn:exclusiveGateway>
     <bpmn:serviceTask id="ChargeCustomer" name="Charge the customer">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="charge-customer" retries="3" />
+        <zeebe:taskDefinition type="charge-customer" retries="5" />
         <zeebe:taskHeaders>
           <zeebe:header key="provider" value="acme-pay" />
         </zeebe:taskHeaders>
@@ -54,7 +57,7 @@
     </bpmn:businessRuleTask>
     <bpmn:scriptTask id="RoundFee" name="Round the fee">
       <bpmn:extensionElements>
-        <zeebe:script expression="=round half up(fee, 2)" resultVariable="roundedFee" />
+        <zeebe:script expression="=round half up(fee * 1.1, 2)" resultVariable="roundedFee" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_p6</bpmn:incoming>
       <bpmn:outgoing>Flow_p10</bpmn:outgoing>
@@ -65,7 +68,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="noAuth" target="authentication.type" />
           <zeebe:input source="POST" target="method" />
-          <zeebe:input source="https://psp.example.com/notify" target="url" />
+          <zeebe:input source="https://psp.example.com/v2/notify" target="url" />
           <zeebe:input source="={&quot;orderId&quot;: orderId, &quot;fee&quot;: roundedFee}" target="body" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>

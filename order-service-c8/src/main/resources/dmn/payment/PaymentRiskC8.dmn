@@ -14,19 +14,24 @@
       </input>
       <output id="Output_riskLevel" label="Risk level" name="riskLevel" typeRef="string" />
       <rule id="Rule_PaymentRiskC8_1">
-        <inputEntry id="InputEntry_PaymentRiskC8_1_amount"><text>&gt; 1000</text></inputEntry>
-        <inputEntry id="InputEntry_PaymentRiskC8_1_segment"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_PaymentRiskC8_1_amount"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_PaymentRiskC8_1_segment"><text>&quot;BLOCKED&quot;</text></inputEntry>
         <outputEntry id="OutputEntry_PaymentRiskC8_1"><text>&quot;HIGH&quot;</text></outputEntry>
       </rule>
       <rule id="Rule_PaymentRiskC8_2">
-        <inputEntry id="InputEntry_PaymentRiskC8_2_amount"><text>-</text></inputEntry>
-        <inputEntry id="InputEntry_PaymentRiskC8_2_segment"><text>&quot;VIP&quot;</text></inputEntry>
-        <outputEntry id="OutputEntry_PaymentRiskC8_2"><text>&quot;LOW&quot;</text></outputEntry>
+        <inputEntry id="InputEntry_PaymentRiskC8_2_amount"><text>&gt; 500</text></inputEntry>
+        <inputEntry id="InputEntry_PaymentRiskC8_2_segment"><text>-</text></inputEntry>
+        <outputEntry id="OutputEntry_PaymentRiskC8_2"><text>&quot;HIGH&quot;</text></outputEntry>
       </rule>
       <rule id="Rule_PaymentRiskC8_3">
         <inputEntry id="InputEntry_PaymentRiskC8_3_amount"><text>-</text></inputEntry>
-        <inputEntry id="InputEntry_PaymentRiskC8_3_segment"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_PaymentRiskC8_3_segment"><text>&quot;VIP&quot;</text></inputEntry>
         <outputEntry id="OutputEntry_PaymentRiskC8_3"><text>&quot;LOW&quot;</text></outputEntry>
+      </rule>
+      <rule id="Rule_PaymentRiskC8_4">
+        <inputEntry id="InputEntry_PaymentRiskC8_4_amount"><text>-</text></inputEntry>
+        <inputEntry id="InputEntry_PaymentRiskC8_4_segment"><text>-</text></inputEntry>
+        <outputEntry id="OutputEntry_PaymentRiskC8_4"><text>&quot;LOW&quot;</text></outputEntry>
       </rule>
     </decisionTable>
   </decision>
