@@ -9,7 +9,7 @@
     <bpmn:messageFlow id="MFlow_2" sourceRef="Participant_Kafka" targetRef="AwaitPayment" />
   </bpmn:collaboration>
   <bpmn:process id="OrderMainProcess" name="Order origination" isExecutable="true">
-    <bpmn:serviceTask id="ValidateOrder" name="Validate the order" camunda:asyncBefore="true" camunda:type="external" camunda:topic="validateOrder">
+    <bpmn:serviceTask id="ValidateOrder" name="Validate the order (edited)" camunda:asyncBefore="true" camunda:type="external" camunda:topic="validateOrder">
       <bpmn:incoming>Flow_om1</bpmn:incoming>
       <bpmn:outgoing>Flow_om2</bpmn:outgoing>
     </bpmn:serviceTask>
