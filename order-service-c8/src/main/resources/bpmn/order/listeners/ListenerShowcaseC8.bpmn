@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_listenershowcasec8" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.49.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.8.0">
+  <bpmn:process id="ListenerShowcaseC8" name="Listener showcase" isExecutable="true">
+    <bpmn:extensionElements>
+        <zeebe:executionListeners>
+          <zeebe:executionListener eventType="start" retries="3" type="audit-step" />
+          <zeebe:executionListener eventType="end" retries="3" type="audit-step" />
+        </zeebe:executionListeners>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="OrderReceivedC8" name="Order received">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="CheckStockC8" name="Check stock">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="find-items" retries="3" />
+        <zeebe:executionListeners>
+          <zeebe:executionListener eventType="start" retries="3" type="audit-step" />
+          <zeebe:executionListener eventType="start" retries="3" type="audit-order-step" />
+          <zeebe:executionListener eventType="end" retries="3" type="audit-step" />
+        </zeebe:executionListeners>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="ApproveOrderC8" name="Approve the order">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:executionListeners>
+          <zeebe:executionListener eventType="start" retries="3" type="audit-step" />
+        </zeebe:executionListeners>
+        <zeebe:taskListeners>
+          <zeebe:taskListener eventType="creating" retries="3" type="audit-step" />
+          <zeebe:taskListener eventType="assigning" retries="3" type="audit-step" />
+          <zeebe:taskListener eventType="updating" retries="3" type="audit-order-step" />
+          <zeebe:taskListener eventType="completing" retries="3" type="audit-step" />
+          <zeebe:taskListener eventType="canceling" retries="3" type="audit-step" />
+        </zeebe:taskListeners>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:intermediateCatchEvent id="WaitCoolingC8" name="Wait 1 hour">
+      <bpmn:extensionElements>
+        <zeebe:executionListeners>
+          <zeebe:executionListener eventType="start" retries="3" type="audit-step" />
+          <zeebe:executionListener eventType="end" retries="3" type="audit-step" />
+        </zeebe:executionListeners>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+      <bpmn:outgoing>Flow_4</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerDef_WaitCoolingC8">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:endEvent id="OrderApprovedC8" name="Order approved">
+      <bpmn:extensionElements>
+        <zeebe:executionListeners>
+          <zeebe:executionListener eventType="end" retries="3" type="audit-step" />
+        </zeebe:executionListeners>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="OrderReceivedC8" targetRef="CheckStockC8" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="CheckStockC8" targetRef="ApproveOrderC8" />
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="ApproveOrderC8" targetRef="WaitCoolingC8" />
+    <bpmn:sequenceFlow id="Flow_4" sourceRef="WaitCoolingC8" targetRef="OrderApprovedC8" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_ListenerShowcaseC8">
+    <bpmndi:BPMNPlane id="BPMNPlane_ListenerShowcaseC8" bpmnElement="ListenerShowcaseC8">
+      <bpmndi:BPMNShape id="OrderReceivedC8_di" bpmnElement="OrderReceivedC8">
+        <dc:Bounds x="180" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="225" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CheckStockC8_di" bpmnElement="CheckStockC8">
+        <dc:Bounds x="460" y="160" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ApproveOrderC8_di" bpmnElement="ApproveOrderC8">
+        <dc:Bounds x="740" y="160" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="WaitCoolingC8_di" bpmnElement="WaitCoolingC8">
+        <dc:Bounds x="1020" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="998" y="225" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="OrderApprovedC8_di" bpmnElement="OrderApprovedC8">
+        <dc:Bounds x="1300" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1278" y="225" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="216" y="200" />
+        <di:waypoint x="460" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="560" y="200" />
+        <di:waypoint x="740" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <di:waypoint x="840" y="200" />
+        <di:waypoint x="1020" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_4_di" bpmnElement="Flow_4">
+        <di:waypoint x="1056" y="200" />
+        <di:waypoint x="1300" y="200" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
