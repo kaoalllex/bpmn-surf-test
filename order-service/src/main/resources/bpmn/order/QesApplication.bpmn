@@ -10,14 +10,14 @@
       <bpmn:startEvent id="UzStart" name="Begin">
         <bpmn:outgoing>UzFlow_1</bpmn:outgoing>
       </bpmn:startEvent>
-      <bpmn:userTask id="IssueUz" name="Issue UZ">
+      <bpmn:userTask id="IssueUz" name="Issue UZ certificate">
         <bpmn:incoming>UzFlow_1</bpmn:incoming>
         <bpmn:outgoing>UzFlow_2</bpmn:outgoing>
       </bpmn:userTask>
       <bpmn:subProcess id="SignUz" name="Sign UZ">
         <bpmn:incoming>UzFlow_2</bpmn:incoming>
         <bpmn:outgoing>UzFlow_3</bpmn:outgoing>
-        <bpmn:userTask id="SignDocument" name="Sign document" />
+        <bpmn:userTask id="SignDocument" name="Sign document with QES" />
         <bpmn:userTask id="VerifySignature" name="Verify signature" />
       </bpmn:subProcess>
       <bpmn:endEvent id="UzEnd" name="Issued">
@@ -31,12 +31,12 @@
       <bpmn:incoming>Flow_2</bpmn:incoming>
       <bpmn:outgoing>Flow_3</bpmn:outgoing>
       <bpmn:userTask id="CheckPassport" name="Check passport" />
+      <bpmn:userTask id="CheckAddress" name="Check address" />
     </bpmn:subProcess>
     <bpmn:subProcess id="ArchiveApplication" name="Archive application">
       <bpmn:incoming>Flow_3</bpmn:incoming>
       <bpmn:outgoing>Flow_4</bpmn:outgoing>
       <bpmn:userTask id="ArchiveScan" name="Archive scan" />
-      <bpmn:userTask id="NotifyArchive" name="Notify archive" />
     </bpmn:subProcess>
     <bpmn:subProcess id="NotifyClient" name="Notify client">
       <bpmn:incoming>Flow_4</bpmn:incoming>
@@ -161,15 +161,15 @@
       <bpmndi:BPMNShape id="CheckPassport_di" bpmnElement="CheckPassport">
         <dc:Bounds x="160" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CheckAddress_di" bpmnElement="CheckAddress">
+        <dc:Bounds x="310" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
   <bpmndi:BPMNDiagram id="BPMNDiagram_ArchiveApplication">
     <bpmndi:BPMNPlane id="BPMNPlane_ArchiveApplication" bpmnElement="ArchiveApplication">
       <bpmndi:BPMNShape id="ArchiveScan_di" bpmnElement="ArchiveScan">
         <dc:Bounds x="160" y="80" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="NotifyArchive_di" bpmnElement="NotifyArchive">
-        <dc:Bounds x="310" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
