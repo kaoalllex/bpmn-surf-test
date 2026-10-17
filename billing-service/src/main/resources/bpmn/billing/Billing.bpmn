@@ -21,7 +21,7 @@
     <bpmn:serviceTask id="IssueInvoice" name="Issue the invoice" camunda:asyncBefore="true" camunda:class="com.example.billing.delegate.IssueInvoiceDelegate">
       <bpmn:extensionElements>
         <camunda:field name="currency">
-          <camunda:string>EUR</camunda:string>
+          <camunda:string>USD</camunda:string>
         </camunda:field>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_b2</bpmn:incoming>

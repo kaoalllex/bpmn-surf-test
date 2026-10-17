@@ -9,6 +9,6 @@ import org.springframework.stereotype.Component
 class AuditListener : ExecutionListener {
 
     override fun notify(execution: DelegateExecution) {
-        println("audit ${execution.eventName} ${execution.currentActivityId}")
+        println("audit ${execution.eventName} ${execution.currentActivityId} in ${execution.processInstanceId}")
     }
 }

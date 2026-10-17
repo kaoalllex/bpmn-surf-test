@@ -15,12 +15,11 @@
     <bpmn:serviceTask id="ValidateOrder" name="Validate the order" camunda:asyncBefore="true" camunda:type="external" camunda:topic="validateOrder">
       <bpmn:extensionElements>
         <camunda:executionListener class="com.example.order.listener.AuditListener" event="start" />
-        <camunda:executionListener class="com.example.order.listener.AuditListener" event="end" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_om1</bpmn:incoming>
       <bpmn:outgoing>Flow_om2</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="CheckFraud" name="Check for fraud" camunda:asyncBefore="true" camunda:type="external" camunda:topic="checkFraud">
+    <bpmn:serviceTask id="CheckFraud" name="Check for fraud" camunda:type="external" camunda:topic="checkFraud">
       <bpmn:extensionElements>
         <camunda:executionListener expression="${auditLog.record(execution)}" event="start" />
       </bpmn:extensionElements>
@@ -30,6 +29,7 @@
     <bpmn:callActivity id="Fulfillment" name="Fulfillment" camunda:asyncBefore="true" calledElement="FulfillmentProcess">
       <bpmn:extensionElements>
         <camunda:in source="orderId" target="orderId" />
+        <camunda:in source="priority" target="priority" />
         <camunda:out source="shipmentId" target="shipmentId" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_om3</bpmn:incoming>
@@ -55,10 +55,18 @@
       <bpmn:outgoing>Flow_om8</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:serviceTask id="NotifyCustomer" name="Notify the customer" camunda:type="external" camunda:topic="notifyCustomer">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="sla" value="PT1H" />
+        </camunda:properties>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="channel">email</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_om7</bpmn:incoming>
       <bpmn:outgoing>Flow_om9</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="CancelOrder" name="Cancel the order" camunda:type="external" camunda:topic="cancelOrder">
+    <bpmn:serviceTask id="CancelOrder" name="Cancel the order" camunda:type="external" camunda:topic="cancelOrder" camunda:taskPriority="5">
       <bpmn:incoming>Flow_om8</bpmn:incoming>
       <bpmn:outgoing>Flow_om10</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -79,7 +87,7 @@
     <bpmn:sequenceFlow id="Flow_om5" sourceRef="Payment" targetRef="AwaitPayment" />
     <bpmn:sequenceFlow id="Flow_om6" sourceRef="AwaitPayment" targetRef="PaidGateway" />
     <bpmn:sequenceFlow id="Flow_om7" name="yes" sourceRef="PaidGateway" targetRef="NotifyCustomer">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${paid}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${paid &amp;&amp; amount &gt; 0}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_om8" name="no" sourceRef="PaidGateway" targetRef="CancelOrder" />
     <bpmn:sequenceFlow id="Flow_om9" sourceRef="NotifyCustomer" targetRef="OrderDone" />

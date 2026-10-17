@@ -10,14 +10,15 @@
     <bpmn:serviceTask id="FindItems" name="Find the items" camunda:asyncBefore="true" camunda:type="external" camunda:topic="findItems">
       <bpmn:incoming>Flow_d1</bpmn:incoming>
       <bpmn:outgoing>Flow_d2</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="${items}" camunda:elementVariable="item" />
     </bpmn:serviceTask>
     <bpmn:serviceTask id="FindItemsInCatalog" name="Find the items in the catalog" camunda:asyncBefore="true" camunda:type="external" camunda:topic="findItemsInCatalog">
       <bpmn:incoming>Flow_d2</bpmn:incoming>
       <bpmn:outgoing>Flow_d3</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="PickCourier" name="Pick a courier" camunda:assignee="${logisticsUser}">
+    <bpmn:userTask id="PickCourier" name="Pick a courier" camunda:formKey="embedded:app:forms/courier.html" camunda:assignee="${courierDesk}">
       <bpmn:extensionElements>
-        <camunda:taskListener class="com.example.order.listener.AssignCourierListener" event="create" />
+        <camunda:taskListener class="com.example.order.listener.AssignCourierListener" event="assignment" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_d3</bpmn:incoming>
       <bpmn:outgoing>Flow_d4</bpmn:outgoing>
