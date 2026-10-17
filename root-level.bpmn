@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_rootlevelprocess" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.49.0">
-  <bpmn:message id="Message_RootOrderPaid" name="OrderPaid" />
+  <bpmn:message id="Message_RootOrderPaid" name="OrderPaid (many-files)" />
   <bpmn:process id="RootLevelProcess" name="Root-level smoke diagram" isExecutable="true">
     <bpmn:startEvent id="StartRoot" name="Started">
       <bpmn:outgoing>Flow_root1</bpmn:outgoing>
