@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_listenershowcase" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.49.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.23.0">
+  <bpmn:process id="ListenerShowcase" name="Listener showcase" isExecutable="true">
+    <bpmn:extensionElements>
+        <camunda:executionListener class="com.example.order.listener.AuditListener" event="start" />
+        <camunda:executionListener class="com.example.order.listener.FulfillmentAudit" event="end" />
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="OrderReceived" name="Order received">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="CheckStock" name="Check stock" camunda:type="external" camunda:topic="findItems">
+      <bpmn:extensionElements>
+        <camunda:executionListener class="com.example.order.listener.AuditListener" event="start" />
+        <camunda:executionListener delegateExpression="${stepTimer}" event="start" />
+        <camunda:executionListener class="com.example.order.listener.FulfillmentAudit" event="start" />
+        <camunda:executionListener class="com.example.order.listener.AuditListener" event="end" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="ApproveOrder" name="Approve the order">
+      <bpmn:extensionElements>
+        <camunda:executionListener class="com.example.order.listener.AuditListener" event="start" />
+        <camunda:taskListener class="com.example.order.listener.AssignCourierListener" event="create" />
+        <camunda:taskListener class="com.example.order.listener.AssignCourierListener" event="assignment" />
+        <camunda:taskListener class="com.example.order.listener.AuditListener" event="update" />
+        <camunda:taskListener class="com.example.order.listener.AuditListener" event="complete" />
+        <camunda:taskListener class="com.example.order.listener.FulfillmentAudit" event="delete" />
+        <camunda:taskListener class="com.example.order.listener.StepTimer" event="timeout" id="TaskListener_timeout">
+          <bpmn:timerEventDefinition id="TimerDef_tl_timeout">
+            <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT4H</bpmn:timeDuration>
+          </bpmn:timerEventDefinition>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:intermediateCatchEvent id="WaitCooling" name="Wait 1 hour">
+      <bpmn:extensionElements>
+        <camunda:executionListener class="com.example.order.listener.AuditListener" event="start" />
+        <camunda:executionListener class="com.example.order.listener.AuditListener" event="end" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+      <bpmn:outgoing>Flow_4</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerDef_WaitCooling">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:serviceTask id="LogOutcome" name="Log the outcome" camunda:type="external" camunda:topic="findItemsInCatalog">
+      <bpmn:extensionElements>
+        <camunda:executionListener expression="${audit.log(execution)}" event="end" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_4</bpmn:incoming>
+      <bpmn:outgoing>Flow_5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="OrderApproved" name="Order approved">
+      <bpmn:extensionElements>
+        <camunda:executionListener class="com.example.order.listener.FulfillmentAudit" event="end" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="OrderReceived" targetRef="CheckStock" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="CheckStock" targetRef="ApproveOrder">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="${stepTimer}" event="take" />
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="ApproveOrder" targetRef="WaitCooling" />
+    <bpmn:sequenceFlow id="Flow_4" sourceRef="WaitCooling" targetRef="LogOutcome" />
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="LogOutcome" targetRef="OrderApproved" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_ListenerShowcase">
+    <bpmndi:BPMNPlane id="BPMNPlane_ListenerShowcase" bpmnElement="ListenerShowcase">
+      <bpmndi:BPMNShape id="OrderReceived_di" bpmnElement="OrderReceived">
+        <dc:Bounds x="180" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="225" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CheckStock_di" bpmnElement="CheckStock">
+        <dc:Bounds x="460" y="160" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ApproveOrder_di" bpmnElement="ApproveOrder">
+        <dc:Bounds x="740" y="160" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="WaitCooling_di" bpmnElement="WaitCooling">
+        <dc:Bounds x="1020" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="998" y="225" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="LogOutcome_di" bpmnElement="LogOutcome">
+        <dc:Bounds x="1300" y="160" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="OrderApproved_di" bpmnElement="OrderApproved">
+        <dc:Bounds x="1580" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1558" y="225" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="216" y="200" />
+        <di:waypoint x="460" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="560" y="200" />
+        <di:waypoint x="740" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <di:waypoint x="840" y="200" />
+        <di:waypoint x="1020" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_4_di" bpmnElement="Flow_4">
+        <di:waypoint x="1056" y="200" />
+        <di:waypoint x="1300" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_5_di" bpmnElement="Flow_5">
+        <di:waypoint x="1400" y="200" />
+        <di:waypoint x="1580" y="200" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
