@@ -63,7 +63,7 @@
         <inputEntry id="Rule_003_in3"><text>"ECONOMY"</text></inputEntry>
         <inputEntry id="Rule_003_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
         <inputEntry id="Rule_003_in5"><text></text></inputEntry>
-        <outputEntry id="Rule_003_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_003_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY_INSURED"</text></outputEntry>
         <outputEntry id="Rule_003_out1"><text>12</text></outputEntry>
       </rule>
       <rule id="Rule_004">
@@ -252,6 +252,17 @@
         <inputEntry id="Rule_020_in5"><text>false</text></inputEntry>
         <outputEntry id="Rule_020_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
         <outputEntry id="Rule_020_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_020b">
+        <description>Employee orders go with the in-house courier inside a two-hour slot</description>
+        <inputEntry id="Rule_020b_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_020b_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_020b_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_020b_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_020b_in4"><text>list contains(customerTags, "employee")</text></inputEntry>
+        <inputEntry id="Rule_020b_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_020b_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_020b_out1"><text>6</text></outputEntry>
       </rule>
       <rule id="Rule_021">
         <description>Express delivery of a small parcel to FR</description>
@@ -481,7 +492,7 @@
         <inputEntry id="Rule_041_in3"><text>"EXPRESS"</text></inputEntry>
         <inputEntry id="Rule_041_in4"><text></text></inputEntry>
         <inputEntry id="Rule_041_in5"><text>false</text></inputEntry>
-        <outputEntry id="Rule_041_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_041_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY_INSURED"</text></outputEntry>
         <outputEntry id="Rule_041_out1"><text>48</text></outputEntry>
       </rule>
       <rule id="Rule_042">
@@ -659,17 +670,6 @@
         <inputEntry id="Rule_057_in5"><text></text></inputEntry>
         <outputEntry id="Rule_057_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
         <outputEntry id="Rule_057_out1"><text>72</text></outputEntry>
-      </rule>
-      <rule id="Rule_058">
-        <description>Economy delivery of a oversized parcel to PL, fragile goods need a signature on delivery and a padded box</description>
-        <inputEntry id="Rule_058_in0"><text>"PL"</text></inputEntry>
-        <inputEntry id="Rule_058_in1"><text>"OVERSIZED"</text></inputEntry>
-        <inputEntry id="Rule_058_in2"><text>&gt; 31.5</text></inputEntry>
-        <inputEntry id="Rule_058_in3"><text>"ECONOMY"</text></inputEntry>
-        <inputEntry id="Rule_058_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
-        <inputEntry id="Rule_058_in5"><text>true</text></inputEntry>
-        <outputEntry id="Rule_058_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
-        <outputEntry id="Rule_058_out1"><text>12</text></outputEntry>
       </rule>
       <rule id="Rule_059">
         <description>Scheduled delivery of a oversized parcel to PL</description>
@@ -878,7 +878,7 @@
         <inputEntry id="Rule_077_in4"><text></text></inputEntry>
         <inputEntry id="Rule_077_in5"><text>false</text></inputEntry>
         <outputEntry id="Rule_077_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
-        <outputEntry id="Rule_077_out1"><text>72</text></outputEntry>
+        <outputEntry id="Rule_077_out1"><text>96</text></outputEntry>
       </rule>
       <rule id="Rule_078">
         <description>Economy delivery of a oversized parcel to NL</description>
@@ -1022,6 +1022,17 @@
         <inputEntry id="Rule_090_in5"><text></text></inputEntry>
         <outputEntry id="Rule_090_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
         <outputEntry id="Rule_090_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_090b">
+        <description>Employee orders go with the in-house courier inside a two-hour slot</description>
+        <inputEntry id="Rule_090b_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_090b_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_090b_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_090b_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_090b_in4"><text>list contains(customerTags, "employee")</text></inputEntry>
+        <inputEntry id="Rule_090b_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_090b_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_090b_out1"><text>6</text></outputEntry>
       </rule>
       <rule id="Rule_091">
         <description>Express delivery of a large parcel to ES, fragile goods need a signature on delivery and a padded box</description>
