@@ -1,0 +1,1127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="CarrierSelection_defs" name="Carrier selection" namespace="http://camunda.org/schema/1.0/dmn">
+  <decision id="CarrierSelection" name="Carrier selection for outbound parcels">
+    <decisionTable id="CarrierSelection_table" hitPolicy="FIRST">
+      <input id="Input_0" label="Destination country" camunda:inputVariable="country">
+        <inputExpression id="InputExpression_0" typeRef="string"><text>country</text></inputExpression>
+      </input>
+      <input id="Input_1" label="Parcel size class" camunda:inputVariable="parcelSize">
+        <inputExpression id="InputExpression_1" typeRef="string"><text>parcelSize</text></inputExpression>
+      </input>
+      <input id="Input_2" label="Gross weight, kg" camunda:inputVariable="weightKg">
+        <inputExpression id="InputExpression_2" typeRef="double"><text>weightKg</text></inputExpression>
+      </input>
+      <input id="Input_3" label="Requested delivery speed" camunda:inputVariable="speed">
+        <inputExpression id="InputExpression_3" typeRef="string"><text>speed</text></inputExpression>
+      </input>
+      <input id="Input_4" label="Customer tier and tags" camunda:inputVariable="customerTags">
+        <inputExpression id="InputExpression_4" typeRef="string"><text>customerTags</text></inputExpression>
+      </input>
+      <input id="Input_5" label="Fragile or hazardous goods" camunda:inputVariable="fragile">
+        <inputExpression id="InputExpression_5" typeRef="boolean"><text>fragile</text></inputExpression>
+      </input>
+      <output id="Output_0" label="Carrier and service" name="carrier" typeRef="string" />
+      <output id="Output_1" label="Delivery SLA, hours" name="slaHours" typeRef="integer" />
+      <rule id="Rule_000">
+        <description>Standard delivery of a small parcel to DE</description>
+        <inputEntry id="Rule_000_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_000_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_000_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_000_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_000_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_000_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_000_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_000_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_001">
+        <description>Express delivery of a small parcel to DE, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_001_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_001_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_001_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_001_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_001_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_001_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_001_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_001_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_002">
+        <description>Same_Day delivery of a small parcel to DE</description>
+        <inputEntry id="Rule_002_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_002_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_002_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_002_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_002_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_002_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_002_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_002_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_003">
+        <description>Economy delivery of a small parcel to DE</description>
+        <inputEntry id="Rule_003_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_003_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_003_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_003_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_003_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_003_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_003_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_003_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_004">
+        <description>Scheduled delivery of a small parcel to DE, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_004_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_004_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_004_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_004_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_004_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_004_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_004_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_004_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_005">
+        <description>Standard delivery of a medium parcel to DE</description>
+        <inputEntry id="Rule_005_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_005_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_005_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_005_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_005_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_005_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_005_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_005_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_006">
+        <description>Express delivery of a medium parcel to DE</description>
+        <inputEntry id="Rule_006_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_006_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_006_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_006_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_006_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_006_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_006_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_006_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_007">
+        <description>Same_Day delivery of a medium parcel to DE, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_007_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_007_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_007_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_007_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_007_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_007_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_007_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_007_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_008">
+        <description>Economy delivery of a medium parcel to DE</description>
+        <inputEntry id="Rule_008_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_008_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_008_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_008_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_008_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_008_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_008_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_008_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_009">
+        <description>Scheduled delivery of a medium parcel to DE</description>
+        <inputEntry id="Rule_009_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_009_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_009_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_009_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_009_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_009_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_009_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_009_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_010">
+        <description>Standard delivery of a large parcel to DE, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_010_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_010_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_010_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_010_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_010_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_010_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_010_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_010_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_011">
+        <description>Express delivery of a large parcel to DE</description>
+        <inputEntry id="Rule_011_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_011_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_011_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_011_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_011_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_011_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_011_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_011_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_012">
+        <description>Same_Day delivery of a large parcel to DE</description>
+        <inputEntry id="Rule_012_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_012_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_012_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_012_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_012_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_012_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_012_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_012_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_013">
+        <description>Economy delivery of a large parcel to DE, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_013_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_013_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_013_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_013_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_013_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_013_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_013_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_013_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_014">
+        <description>Scheduled delivery of a large parcel to DE</description>
+        <inputEntry id="Rule_014_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_014_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_014_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_014_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_014_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_014_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_014_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_014_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_015">
+        <description>Standard delivery of a oversized parcel to DE</description>
+        <inputEntry id="Rule_015_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_015_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_015_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_015_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_015_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_015_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_015_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_015_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_016">
+        <description>Express delivery of a oversized parcel to DE, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_016_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_016_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_016_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_016_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_016_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_016_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_016_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_016_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_017">
+        <description>Same_Day delivery of a oversized parcel to DE</description>
+        <inputEntry id="Rule_017_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_017_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_017_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_017_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_017_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_017_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_017_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_017_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_018">
+        <description>Economy delivery of a oversized parcel to DE</description>
+        <inputEntry id="Rule_018_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_018_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_018_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_018_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_018_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_018_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_018_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_018_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_019">
+        <description>Scheduled delivery of a oversized parcel to DE, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_019_in0"><text>"DE"</text></inputEntry>
+        <inputEntry id="Rule_019_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_019_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_019_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_019_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_019_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_019_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_019_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_020">
+        <description>Standard delivery of a small parcel to FR</description>
+        <inputEntry id="Rule_020_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_020_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_020_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_020_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_020_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_020_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_020_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_020_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_021">
+        <description>Express delivery of a small parcel to FR</description>
+        <inputEntry id="Rule_021_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_021_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_021_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_021_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_021_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_021_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_021_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_021_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_022">
+        <description>Same_Day delivery of a small parcel to FR, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_022_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_022_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_022_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_022_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_022_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_022_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_022_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_022_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_023">
+        <description>Economy delivery of a small parcel to FR</description>
+        <inputEntry id="Rule_023_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_023_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_023_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_023_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_023_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_023_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_023_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_023_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_024">
+        <description>Scheduled delivery of a small parcel to FR</description>
+        <inputEntry id="Rule_024_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_024_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_024_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_024_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_024_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_024_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_024_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_024_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_025">
+        <description>Standard delivery of a medium parcel to FR, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_025_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_025_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_025_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_025_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_025_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_025_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_025_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_025_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_026">
+        <description>Express delivery of a medium parcel to FR</description>
+        <inputEntry id="Rule_026_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_026_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_026_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_026_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_026_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_026_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_026_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_026_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_027">
+        <description>Same_Day delivery of a medium parcel to FR</description>
+        <inputEntry id="Rule_027_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_027_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_027_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_027_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_027_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_027_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_027_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_027_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_028">
+        <description>Economy delivery of a medium parcel to FR, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_028_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_028_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_028_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_028_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_028_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_028_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_028_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_028_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_029">
+        <description>Scheduled delivery of a medium parcel to FR</description>
+        <inputEntry id="Rule_029_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_029_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_029_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_029_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_029_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_029_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_029_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_029_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_030">
+        <description>Standard delivery of a large parcel to FR</description>
+        <inputEntry id="Rule_030_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_030_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_030_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_030_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_030_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_030_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_030_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_030_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_031">
+        <description>Express delivery of a large parcel to FR, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_031_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_031_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_031_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_031_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_031_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_031_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_031_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_031_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_032">
+        <description>Same_Day delivery of a large parcel to FR</description>
+        <inputEntry id="Rule_032_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_032_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_032_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_032_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_032_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_032_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_032_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_032_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_033">
+        <description>Economy delivery of a large parcel to FR</description>
+        <inputEntry id="Rule_033_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_033_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_033_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_033_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_033_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_033_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_033_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_033_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_034">
+        <description>Scheduled delivery of a large parcel to FR, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_034_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_034_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_034_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_034_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_034_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_034_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_034_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_034_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_035">
+        <description>Standard delivery of a oversized parcel to FR</description>
+        <inputEntry id="Rule_035_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_035_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_035_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_035_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_035_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_035_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_035_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_035_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_036">
+        <description>Express delivery of a oversized parcel to FR</description>
+        <inputEntry id="Rule_036_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_036_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_036_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_036_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_036_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_036_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_036_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_036_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_037">
+        <description>Same_Day delivery of a oversized parcel to FR, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_037_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_037_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_037_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_037_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_037_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_037_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_037_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_037_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_038">
+        <description>Economy delivery of a oversized parcel to FR</description>
+        <inputEntry id="Rule_038_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_038_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_038_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_038_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_038_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_038_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_038_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_038_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_039">
+        <description>Scheduled delivery of a oversized parcel to FR</description>
+        <inputEntry id="Rule_039_in0"><text>"FR"</text></inputEntry>
+        <inputEntry id="Rule_039_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_039_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_039_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_039_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_039_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_039_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_039_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_040">
+        <description>Standard delivery of a small parcel to PL, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_040_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_040_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_040_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_040_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_040_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_040_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_040_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_040_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_041">
+        <description>Express delivery of a small parcel to PL</description>
+        <inputEntry id="Rule_041_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_041_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_041_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_041_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_041_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_041_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_041_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_041_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_042">
+        <description>Same_Day delivery of a small parcel to PL</description>
+        <inputEntry id="Rule_042_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_042_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_042_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_042_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_042_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_042_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_042_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_042_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_043">
+        <description>Economy delivery of a small parcel to PL, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_043_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_043_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_043_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_043_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_043_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_043_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_043_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_043_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_044">
+        <description>Scheduled delivery of a small parcel to PL</description>
+        <inputEntry id="Rule_044_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_044_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_044_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_044_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_044_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_044_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_044_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_044_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_045">
+        <description>Standard delivery of a medium parcel to PL</description>
+        <inputEntry id="Rule_045_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_045_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_045_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_045_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_045_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_045_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_045_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_045_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_046">
+        <description>Express delivery of a medium parcel to PL, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_046_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_046_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_046_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_046_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_046_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_046_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_046_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_046_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_047">
+        <description>Same_Day delivery of a medium parcel to PL</description>
+        <inputEntry id="Rule_047_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_047_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_047_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_047_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_047_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_047_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_047_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_047_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_048">
+        <description>Economy delivery of a medium parcel to PL</description>
+        <inputEntry id="Rule_048_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_048_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_048_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_048_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_048_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_048_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_048_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_048_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_049">
+        <description>Scheduled delivery of a medium parcel to PL, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_049_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_049_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_049_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_049_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_049_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_049_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_049_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_049_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_050">
+        <description>Standard delivery of a large parcel to PL</description>
+        <inputEntry id="Rule_050_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_050_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_050_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_050_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_050_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_050_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_050_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_050_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_051">
+        <description>Express delivery of a large parcel to PL</description>
+        <inputEntry id="Rule_051_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_051_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_051_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_051_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_051_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_051_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_051_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_051_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_052">
+        <description>Same_Day delivery of a large parcel to PL, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_052_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_052_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_052_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_052_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_052_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_052_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_052_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_052_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_053">
+        <description>Economy delivery of a large parcel to PL</description>
+        <inputEntry id="Rule_053_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_053_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_053_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_053_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_053_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_053_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_053_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_053_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_054">
+        <description>Scheduled delivery of a large parcel to PL</description>
+        <inputEntry id="Rule_054_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_054_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_054_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_054_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_054_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_054_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_054_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_054_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_055">
+        <description>Standard delivery of a oversized parcel to PL, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_055_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_055_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_055_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_055_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_055_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_055_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_055_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_055_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_056">
+        <description>Express delivery of a oversized parcel to PL</description>
+        <inputEntry id="Rule_056_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_056_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_056_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_056_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_056_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_056_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_056_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_056_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_057">
+        <description>Same_Day delivery of a oversized parcel to PL</description>
+        <inputEntry id="Rule_057_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_057_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_057_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_057_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_057_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_057_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_057_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_057_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_058">
+        <description>Economy delivery of a oversized parcel to PL, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_058_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_058_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_058_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_058_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_058_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_058_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_058_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_058_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_059">
+        <description>Scheduled delivery of a oversized parcel to PL</description>
+        <inputEntry id="Rule_059_in0"><text>"PL"</text></inputEntry>
+        <inputEntry id="Rule_059_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_059_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_059_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_059_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_059_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_059_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_059_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_060">
+        <description>Standard delivery of a small parcel to NL</description>
+        <inputEntry id="Rule_060_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_060_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_060_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_060_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_060_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_060_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_060_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_060_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_061">
+        <description>Express delivery of a small parcel to NL, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_061_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_061_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_061_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_061_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_061_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_061_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_061_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_061_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_062">
+        <description>Same_Day delivery of a small parcel to NL</description>
+        <inputEntry id="Rule_062_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_062_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_062_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_062_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_062_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_062_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_062_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_062_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_063">
+        <description>Economy delivery of a small parcel to NL</description>
+        <inputEntry id="Rule_063_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_063_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_063_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_063_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_063_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_063_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_063_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_063_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_064">
+        <description>Scheduled delivery of a small parcel to NL, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_064_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_064_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_064_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_064_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_064_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_064_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_064_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_064_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_065">
+        <description>Standard delivery of a medium parcel to NL</description>
+        <inputEntry id="Rule_065_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_065_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_065_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_065_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_065_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_065_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_065_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_065_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_066">
+        <description>Express delivery of a medium parcel to NL</description>
+        <inputEntry id="Rule_066_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_066_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_066_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_066_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_066_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_066_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_066_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_066_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_067">
+        <description>Same_Day delivery of a medium parcel to NL, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_067_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_067_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_067_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_067_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_067_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_067_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_067_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_067_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_068">
+        <description>Economy delivery of a medium parcel to NL</description>
+        <inputEntry id="Rule_068_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_068_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_068_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_068_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_068_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_068_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_068_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_068_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_069">
+        <description>Scheduled delivery of a medium parcel to NL</description>
+        <inputEntry id="Rule_069_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_069_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_069_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_069_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_069_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_069_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_069_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_069_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_070">
+        <description>Standard delivery of a large parcel to NL, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_070_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_070_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_070_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_070_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_070_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_070_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_070_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_070_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_071">
+        <description>Express delivery of a large parcel to NL</description>
+        <inputEntry id="Rule_071_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_071_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_071_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_071_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_071_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_071_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_071_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_071_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_072">
+        <description>Same_Day delivery of a large parcel to NL</description>
+        <inputEntry id="Rule_072_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_072_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_072_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_072_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_072_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_072_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_072_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_072_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_073">
+        <description>Economy delivery of a large parcel to NL, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_073_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_073_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_073_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_073_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_073_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_073_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_073_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_073_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_074">
+        <description>Scheduled delivery of a large parcel to NL</description>
+        <inputEntry id="Rule_074_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_074_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_074_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_074_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_074_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_074_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_074_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_074_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_075">
+        <description>Standard delivery of a oversized parcel to NL</description>
+        <inputEntry id="Rule_075_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_075_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_075_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_075_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_075_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_075_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_075_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_075_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_076">
+        <description>Express delivery of a oversized parcel to NL, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_076_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_076_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_076_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_076_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_076_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_076_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_076_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_076_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_077">
+        <description>Same_Day delivery of a oversized parcel to NL</description>
+        <inputEntry id="Rule_077_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_077_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_077_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_077_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_077_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_077_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_077_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_077_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_078">
+        <description>Economy delivery of a oversized parcel to NL</description>
+        <inputEntry id="Rule_078_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_078_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_078_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_078_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_078_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_078_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_078_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_078_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_079">
+        <description>Scheduled delivery of a oversized parcel to NL, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_079_in0"><text>"NL"</text></inputEntry>
+        <inputEntry id="Rule_079_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_079_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_079_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_079_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_079_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_079_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_079_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_080">
+        <description>Standard delivery of a small parcel to ES</description>
+        <inputEntry id="Rule_080_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_080_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_080_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_080_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_080_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_080_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_080_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_080_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_081">
+        <description>Express delivery of a small parcel to ES</description>
+        <inputEntry id="Rule_081_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_081_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_081_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_081_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_081_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_081_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_081_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_081_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_082">
+        <description>Same_Day delivery of a small parcel to ES, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_082_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_082_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_082_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_082_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_082_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_082_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_082_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_082_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_083">
+        <description>Economy delivery of a small parcel to ES</description>
+        <inputEntry id="Rule_083_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_083_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_083_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_083_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_083_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_083_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_083_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_083_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_084">
+        <description>Scheduled delivery of a small parcel to ES</description>
+        <inputEntry id="Rule_084_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_084_in1"><text>"SMALL"</text></inputEntry>
+        <inputEntry id="Rule_084_in2"><text>&lt;= 2</text></inputEntry>
+        <inputEntry id="Rule_084_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_084_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_084_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_084_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_084_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_085">
+        <description>Standard delivery of a medium parcel to ES, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_085_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_085_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_085_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_085_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_085_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_085_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_085_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_085_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_086">
+        <description>Express delivery of a medium parcel to ES</description>
+        <inputEntry id="Rule_086_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_086_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_086_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_086_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_086_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_086_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_086_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_086_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_087">
+        <description>Same_Day delivery of a medium parcel to ES</description>
+        <inputEntry id="Rule_087_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_087_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_087_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_087_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_087_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_087_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_087_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_087_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_088">
+        <description>Economy delivery of a medium parcel to ES, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_088_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_088_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_088_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_088_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_088_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_088_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_088_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_088_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_089">
+        <description>Scheduled delivery of a medium parcel to ES</description>
+        <inputEntry id="Rule_089_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_089_in1"><text>"MEDIUM"</text></inputEntry>
+        <inputEntry id="Rule_089_in2"><text>[2..10]</text></inputEntry>
+        <inputEntry id="Rule_089_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_089_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_089_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_089_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_089_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_090">
+        <description>Standard delivery of a large parcel to ES</description>
+        <inputEntry id="Rule_090_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_090_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_090_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_090_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_090_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_090_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_090_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_090_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_091">
+        <description>Express delivery of a large parcel to ES, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_091_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_091_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_091_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_091_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_091_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_091_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_091_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_091_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_092">
+        <description>Same_Day delivery of a large parcel to ES</description>
+        <inputEntry id="Rule_092_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_092_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_092_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_092_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_092_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_092_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_092_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_092_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_093">
+        <description>Economy delivery of a large parcel to ES</description>
+        <inputEntry id="Rule_093_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_093_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_093_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_093_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_093_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_093_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_093_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_093_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_094">
+        <description>Scheduled delivery of a large parcel to ES, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_094_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_094_in1"><text>"LARGE"</text></inputEntry>
+        <inputEntry id="Rule_094_in2"><text>[10..31.5]</text></inputEntry>
+        <inputEntry id="Rule_094_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_094_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_094_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_094_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_094_out1"><text>120</text></outputEntry>
+      </rule>
+      <rule id="Rule_095">
+        <description>Standard delivery of a oversized parcel to ES</description>
+        <inputEntry id="Rule_095_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_095_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_095_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_095_in3"><text>"STANDARD"</text></inputEntry>
+        <inputEntry id="Rule_095_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_095_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_095_out0"><text>"DHL_EXPRESS_INTERNATIONAL_PRIORITY"</text></outputEntry>
+        <outputEntry id="Rule_095_out1"><text>24</text></outputEntry>
+      </rule>
+      <rule id="Rule_096">
+        <description>Express delivery of a oversized parcel to ES</description>
+        <inputEntry id="Rule_096_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_096_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_096_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_096_in3"><text>"EXPRESS"</text></inputEntry>
+        <inputEntry id="Rule_096_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_096_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_096_out0"><text>"GLS_BUSINESS_PARCEL_FLEXDELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_096_out1"><text>48</text></outputEntry>
+      </rule>
+      <rule id="Rule_097">
+        <description>Same_Day delivery of a oversized parcel to ES, fragile goods need a signature on delivery and a padded box</description>
+        <inputEntry id="Rule_097_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_097_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_097_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_097_in3"><text>"SAME_DAY"</text></inputEntry>
+        <inputEntry id="Rule_097_in4"><text>list contains(customerTags, "b2b") and not(list contains(customerTags, "vip"))</text></inputEntry>
+        <inputEntry id="Rule_097_in5"><text>true</text></inputEntry>
+        <outputEntry id="Rule_097_out0"><text>"LOCAL_COURIER_SAME_DAY_TWO_HOUR_SLOT"</text></outputEntry>
+        <outputEntry id="Rule_097_out1"><text>72</text></outputEntry>
+      </rule>
+      <rule id="Rule_098">
+        <description>Economy delivery of a oversized parcel to ES</description>
+        <inputEntry id="Rule_098_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_098_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_098_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_098_in3"><text>"ECONOMY"</text></inputEntry>
+        <inputEntry id="Rule_098_in4"><text></text></inputEntry>
+        <inputEntry id="Rule_098_in5"><text>false</text></inputEntry>
+        <outputEntry id="Rule_098_out0"><text>"DPD_CLASSIC_PREDICT_SIGNATURE"</text></outputEntry>
+        <outputEntry id="Rule_098_out1"><text>12</text></outputEntry>
+      </rule>
+      <rule id="Rule_099">
+        <description>Scheduled delivery of a oversized parcel to ES</description>
+        <inputEntry id="Rule_099_in0"><text>"ES"</text></inputEntry>
+        <inputEntry id="Rule_099_in1"><text>"OVERSIZED"</text></inputEntry>
+        <inputEntry id="Rule_099_in2"><text>&gt; 31.5</text></inputEntry>
+        <inputEntry id="Rule_099_in3"><text>"SCHEDULED"</text></inputEntry>
+        <inputEntry id="Rule_099_in4"><text>list contains(customerTags, "vip")</text></inputEntry>
+        <inputEntry id="Rule_099_in5"><text></text></inputEntry>
+        <outputEntry id="Rule_099_out0"><text>"UPS_STANDARD_SATURDAY_DELIVERY"</text></outputEntry>
+        <outputEntry id="Rule_099_out1"><text>120</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>
