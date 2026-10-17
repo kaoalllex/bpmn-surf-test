@@ -19,7 +19,11 @@ public class ChargeCustomerWorker {
 
     @JobWorker(type = "charge-customer")
     public Map<String, Object> charge(@Variable String orderId, @Variable BigDecimal amount) {
-        String chargeId = gateway.charge(orderId, amount);
+        String chargeId = gateway.charge(orderId, amount, idempotencyKey(orderId));
         return Map.of("chargeId", chargeId);
+    }
+
+    private static String idempotencyKey(String orderId) {
+        return "charge-" + orderId;
     }
 }

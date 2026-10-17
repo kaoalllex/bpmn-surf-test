@@ -13,7 +13,7 @@ class FindItemsWorker(
 
     @JobWorker(type = "find-items")
     fun findItems(@Variable orderId: String): Map<String, Any> {
-        val items = itemRepository.findByOrder(orderId)
+        val items = itemRepository.findByOrder(orderId).filter { it.inStock }
         return mapOf("itemCount" to items.size)
     }
 }
